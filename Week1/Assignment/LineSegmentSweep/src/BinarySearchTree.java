@@ -178,10 +178,29 @@ public class BinarySearchTree {
 	}
 	
 	public void erase(int key) {
+		
 		final BSTNode node = this.find(key);
+		
 		if (node != null) {
-			if (node.left == null && node.right == null && node.parent != null) {
-				// 1. Childless with parent - simply delete node.
+			if (node.parent == null) {
+				// 0. Null parent.
+				if (node.isLeaf()) {
+					this.root = null;
+				} else if (node.left != null) {
+					final BSTNode pre = this.findPredecessor(node);
+					pre.right = node.right;
+					pre.right.parent = pre;
+					this.root = node.left;
+					this.root.parent = null;
+				} else {
+					this.root = node.right;
+					if (this.root != null) {
+						this.root.parent = null;
+					}					
+				}
+			}
+			else if (node.isLeaf()) {
+				// 1. Non-null parent and no children.
 				if (node.parent.left == node) {
 					node.parent.left = null;
 				} else {
@@ -194,7 +213,7 @@ public class BinarySearchTree {
 				node.key = tmp.key;
 				node.event = tmp.event;
 				node.left = tmp.left;
-				node.right = tmp.right;
+				node.right = tmp.right;				
 			}
 			else if (node.right != null && node.left == null) {
 				// 3. Right child, no left child.
@@ -202,53 +221,39 @@ public class BinarySearchTree {
 				node.key = tmp.key;
 				node.event = tmp.event;
 				node.left = tmp.left;
-				node.right = tmp.right;
+				node.right = tmp.right;				
 			}
-			else if (node.left != null && node.right != null && node.right.left == null) {
-				// 4,5. Has two children. Right child has no left child.
-				final BSTNode tmp = node.right;
-				node.key = tmp.key;
-				node.event = tmp.event;
-				node.right = tmp.right;
-			}
-			else if (node.left != null && node.right != null &&
-					 (this.findMinimum(node.right) == this.findSuccessor(node)) &&
-					 (this.findMinimum(node.right).isLeaf())
-					) {
-				// 6. X has two children. Right child has minimum that is the
-				// successor of X, and it is a leaf.
-				final BSTNode tmp = this.findMinimum(node.right);
-				tmp.parent.left = null;
-				node.key = tmp.key;
-				node.event = tmp.event;
-			}
-			else if (node.left != null && node.right != null &&
-					   (this.findMinimum(node.right) == this.findSuccessor(node)) &&
-					   this.findSuccessor(node).right != null) {
-				// 7. X has two children. Right child has minimum that is the
-				// successor of X, and it is not a leaf.
-				final BSTNode suc = this.findMinimum(node.right);
-				node.key = suc.key;
-				node.event = suc.event;
-				final BSTNode tmp = suc.right;
-				suc.key = tmp.key;
-				suc.event = tmp.event;
-				suc.left = tmp.left;
-				suc.right = tmp.right;
-			}
-			else if (node.parent == null && node.left != null) {
-				final BSTNode pre = this.findPredecessor(node);
-				pre.right = node.right;
-				pre.right.parent = pre;
-				this.root = node.left;
-				this.root.parent = null;
-			}
-			else if (node.parent == null && node.left == null) {
-				this.root = node.right;
-				if (this.root != null) {
-					this.root.parent = null;
+			else {
+				if (node.right.left == null) {
+					// 4,5. Has two children. Right child has no left child.
+					final BSTNode tmp = node.right;
+					node.key = tmp.key;
+					node.event = tmp.event;
+					node.right = tmp.right;
 				}
-			}
+				else {
+					final BSTNode rmin = this.findMinimum(node.right);
+					if ((rmin == this.findSuccessor(node))) {
+						if (rmin.isLeaf()) {     
+							// 6. X has two children. Right child has minimum that is the
+							// successor of X, and it is a leaf.
+							rmin.parent.left = null;
+							node.key = rmin.key;
+							node.event = rmin.event;
+						} else {
+							// 7. X has two children. Right child has minimum that is the
+							// successor of X, and it is not a leaf.
+							node.key = rmin.key;
+							node.event = rmin.event;
+							final BSTNode tmp = rmin.right;
+							rmin.key = tmp.key;
+							rmin.event = tmp.event;
+							rmin.left = tmp.left;
+							rmin.right = tmp.right;						
+						}
+					}
+				}
+			}	
 		}
 	}
 }

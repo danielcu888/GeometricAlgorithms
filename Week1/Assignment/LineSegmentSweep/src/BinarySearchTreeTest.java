@@ -369,4 +369,19 @@ class BinarySearchTreeTest {
 		assertEquals(expected, actual);
 	}
 
+
+	@Test
+	void testEraseNode0() {
+		final BinarySearchTree tree = new BinarySearchTree();
+		
+		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
+		
+		tree.erase(0);
+		
+		final String actual = tree.toString();
+		final String expected = "";
+		
+		assertEquals(expected, actual);
+	}
+
 }

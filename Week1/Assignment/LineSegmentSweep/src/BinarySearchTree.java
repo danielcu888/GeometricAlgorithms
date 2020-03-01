@@ -22,7 +22,7 @@ public class BinarySearchTree {
 		this.root = null;
 	}
 
-	private BSTNode find(BSTNode node, int key) {
+	private BSTNode find(BSTNode node, double key) {
 		if (node == null) {
 			return null;
 		} else if (key < node.key) {
@@ -34,7 +34,7 @@ public class BinarySearchTree {
 		}
 	}
 	
-	public BSTNode find(int key) {
+	public BSTNode find(double key) {
 		BSTNode n = this.find(this.root, key);
 		if (n.event == null) {
 			return null;
@@ -96,7 +96,7 @@ public class BinarySearchTree {
 		return p;
 	}
 	
-	public BSTNode findSuccessor(int key) {
+	public BSTNode findSuccessor(double key) {
 		final BSTNode n = this.find(key);
 		if (n == null) {
 			return null;
@@ -139,7 +139,7 @@ public class BinarySearchTree {
 		return p;
 	}
 	
-	public BSTNode findPredecessor(int key) {
+	public BSTNode findPredecessor(double key) {
 		final BSTNode n = this.find(key);
 		if (n == null) {
 			return null;
@@ -148,8 +148,8 @@ public class BinarySearchTree {
 		return this.findPredecessor(n);
 	}
 	
-	private BSTNode insert(BSTNode node, int key, Event event) {
-		final int k = node.key;
+	private BSTNode insert(BSTNode node, double key, Event event) {
+		final double k = node.key;
 		if (key < k) {
 			if (node.left != null) {
 				node.left = this.insert(node.left, key, event);
@@ -169,7 +169,7 @@ public class BinarySearchTree {
 		return node;
 	}	
 	
-	public void insert(int key, Event event) {
+	public void insert(double key, Event event) {
 		if (this.root == null) {
 			this.root = new BSTNode(key,event,null,null,null);
 		} else {
@@ -177,7 +177,7 @@ public class BinarySearchTree {
 		}
 	}
 	
-	public void erase(int key) {
+	public void erase(double key) {
 		
 		final BSTNode node = this.find(key);
 		

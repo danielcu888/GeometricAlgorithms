@@ -1,12 +1,12 @@
 
 public class BSTNode {
-	public int key;
+	public double key;
 	public Event event;
 	public BSTNode left;
 	public BSTNode right;
 	public BSTNode parent;
 	
-	public BSTNode(int key_,
+	public BSTNode(double key_,
 				   Event event_,
 				   BSTNode left_,
 				   BSTNode right_,

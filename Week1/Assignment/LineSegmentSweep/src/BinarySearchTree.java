@@ -34,6 +34,10 @@ public class BinarySearchTree {
 		}
 	}
 	
+	public boolean isEmpty() {
+		return this.root == null;
+	}
+	
 	public BSTNode find(double key) {
 		BSTNode n = this.find(this.root, key);
 		if (n.event == null) {
@@ -42,6 +46,10 @@ public class BinarySearchTree {
 		
 		return n;
 	}
+
+	public BSTNode findMinimum() {
+		return this.findMinimum(this.root);
+	}	
 	
 	private BSTNode findMinimum(BSTNode node) {
 		if (node == null) {

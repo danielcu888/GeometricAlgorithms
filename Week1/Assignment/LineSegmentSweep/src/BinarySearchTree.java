@@ -1,267 +1,358 @@
+import java.util.LinkedList;
 
-public class BinarySearchTree {
-	
-	private BSTNode root = null;
-	
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-		this.serialise(this.root, sb);
-		return sb.toString();
-	}
-	
-	private void serialise(BSTNode node, StringBuilder sb) {
-		if (node != null) {
-			this.serialise(node.left, sb);
-			sb.append(node.key + " ");
-			this.serialise(node.right, sb);
-		}
-	}
-		
-	public BinarySearchTree() {
-		this.root = null;
-	}
+class BinarySearchTreeNode<Key extends Comparable<Key>, Value> {
 
-	private BSTNode find(BSTNode node, double key) {
-		if (node == null) {
-			return null;
-		} else if (key < node.key) {
-			return this.find(node.left, key);
-		} else if (key > node.key) {
-			return this.find(node.right, key);
-		} else {
-			return node;
-		}
-	}
-	
-	public boolean isEmpty() {
-		return this.root == null;
-	}
-	
-	public BSTNode find(double key) {
-		BSTNode n = this.find(this.root, key);
-		if (n.event == null) {
-			return null;
-		}
-		
-		return n;
-	}
+    public BinarySearchTreeNode(Key key_, Value val_) {
+        this.key = key_;
+        this.value = val_;
+        this.left = null;
+        this.right = null;
+        this.parent = null;
+    }
 
-	public BSTNode findMinimum() {
-		return this.findMinimum(this.root);
-	}	
-	
-	private BSTNode findMinimum(BSTNode node) {
-		if (node == null) {
-			return null;
-		}
-				
-		while (node.left != null) {
-			node = node.left;
-		}
-		
-		return node;
-	}
+    public Key key;
+    public Value value;
+    public BinarySearchTreeNode<Key,Value> left;
+    public BinarySearchTreeNode<Key,Value> right;
+    public BinarySearchTreeNode<Key,Value> parent;
+}
 
-	private BSTNode findMaximum(BSTNode node) {
-		if (node == null) {
-			return null;
-		}
-				
-		while (node.right != null) {
-			node = node.right;
-		}
-		
-		return node;
-	}
-	
-	private BSTNode findSuccessor(BSTNode node) {
-		
-		if (node.right != null) {
-			return this.findMinimum(node.right);
-		}
-		
-		BSTNode n = node;
-		BSTNode p = n.parent;
-		while (p != null && p.key <= node.key) {
-			n = p;
-			p = p.parent;
-		}
-		
-		if (p == null) {
-			return null;
-		}
-		
-		if (p.right == null) {
-			return p;
-		}
+interface BinarySearchTreeVisitor<Key extends Comparable<Key>, Value> {
 
-		final BSTNode q = this.findMinimum(p.right);
-		if (q != null && q.key < p.key) {
-			return q;
-		}
-		
-		return p;
-	}
-	
-	public BSTNode findSuccessor(double key) {
-		final BSTNode n = this.find(key);
-		if (n == null) {
-			return null;
-		}
-		
-		BSTNode suc = n;
-		do {
-			suc = this.findSuccessor(suc);
-		} while (suc != null && suc.event != null);
-		
-		return this.findSuccessor(n);
-	}
+    public void visit(BinarySearchTreeNode<Key, Value> node);
+}
 
-	private BSTNode findPredecessor(BSTNode node) {
-		
-		if (node.left != null) {
-			return this.findMaximum(node.left);
-		}
-		
-		BSTNode n = node;
-		BSTNode p = n.parent;
-		while (p != null && p.key >= node.key) {
-			n = p;
-			p = p.parent;
-		}
+public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
-		if (p == null) {
-			return null;
-		}
-		
-		if (p.left == null) {
-			return p;
-		}
+    private BinarySearchTreeNode<Key, Value> root;
 
-		final BSTNode q = this.findMaximum(p.left);
-		if (q != null && q.key > p.key) {
-			return q;
-		}
+    private BinarySearchTreeNode<Key,Value> minimum(BinarySearchTreeNode<Key,Value> root) {
+        if (root == null) {
+            return null;
+        } else if (root.left != null) {
+            return this.minimum(root.left);
+        } else {
+            return root;
+        }
+    }
 
-		return p;
-	}
-	
-	public BSTNode findPredecessor(double key) {
-		final BSTNode n = this.find(key);
-		if (n == null) {
-			return null;
-		}
-		
-		return this.findPredecessor(n);
-	}
-	
-	private BSTNode insert(BSTNode node, double key, Event event) {
-		final double k = node.key;
-		if (key < k) {
-			if (node.left != null) {
-				node.left = this.insert(node.left, key, event);
-			} else {
-				node.left = new BSTNode(key, event, null, null, node);
-			}
-		} else if (key > k) {
-			if (node.right != null) {
-				node.right = this.insert(node.right, key, event);
-			} else {
-				node.right = new BSTNode(key, event, null, null, node);
-			}
-		} else {
-			node.event = event;
-		}
+    private BinarySearchTreeNode<Key,Value> insert(BinarySearchTreeNode<Key,Value> curr, BinarySearchTreeNode<Key,Value> n) {
+        if (curr == null) {
+            return n;
+        }
 
-		return node;
-	}	
-	
-	public void insert(double key, Event event) {
-		if (this.root == null) {
-			this.root = new BSTNode(key,event,null,null,null);
-		} else {
-			this.root = this.insert(this.root, key, event);
-		}
-	}
-	
-	public void erase(double key) {
-		
-		final BSTNode node = this.find(key);
-		
-		if (node != null) {
-			if (node.parent == null) {
-				// 0. Null parent.
-				if (node.isLeaf()) {
-					this.root = null;
-				} else if (node.left != null) {
-					final BSTNode pre = this.findPredecessor(node);
-					pre.right = node.right;
-					pre.right.parent = pre;
-					this.root = node.left;
-					this.root.parent = null;
-				} else {
-					this.root = node.right;
-					if (this.root != null) {
-						this.root.parent = null;
-					}					
-				}
-			}
-			else if (node.isLeaf()) {
-				// 1. Non-null parent and no children.
-				if (node.parent.left == node) {
-					node.parent.left = null;
-				} else {
-					node.parent.right = null;
-				}
-			}
-			else if (node.left != null && node.right == null) {
-				// 2. Left child, no right child.
-				final BSTNode tmp = node.left;
-				node.key = tmp.key;
-				node.event = tmp.event;
-				node.left = tmp.left;
-				node.right = tmp.right;				
-			}
-			else if (node.right != null && node.left == null) {
-				// 3. Right child, no left child.
-				final BSTNode tmp = node.right;
-				node.key = tmp.key;
-				node.event = tmp.event;
-				node.left = tmp.left;
-				node.right = tmp.right;				
-			}
-			else {
-				if (node.right.left == null) {
-					// 4,5. Has two children. Right child has no left child.
-					final BSTNode tmp = node.right;
-					node.key = tmp.key;
-					node.event = tmp.event;
-					node.right = tmp.right;
-				}
-				else {
-					final BSTNode rmin = this.findMinimum(node.right);
-					if ((rmin == this.findSuccessor(node))) {
-						if (rmin.isLeaf()) {     
-							// 6. X has two children. Right child has minimum that is the
-							// successor of X, and it is a leaf.
-							rmin.parent.left = null;
-							node.key = rmin.key;
-							node.event = rmin.event;
-						} else {
-							// 7. X has two children. Right child has minimum that is the
-							// successor of X, and it is not a leaf.
-							node.key = rmin.key;
-							node.event = rmin.event;
-							final BSTNode tmp = rmin.right;
-							rmin.key = tmp.key;
-							rmin.event = tmp.event;
-							rmin.left = tmp.left;
-							rmin.right = tmp.right;						
-						}
-					}
-				}
-			}	
-		}
-	}
+        if (n.key.compareTo(curr.key) < 0) {
+            curr.left = this.insert(curr.left, n);
+            curr.left.parent = curr;
+        } else {
+            curr.right = this.insert(curr.right, n);
+            curr.right.parent = curr;
+        }
+
+        return curr;
+    }
+
+    private void print(BinarySearchTreeNode<Key,Value> root, LinkedList<LinkedList<Key>> nodes, int level) {
+        if (nodes.size() <= level) {
+            nodes.add(level, new LinkedList<Key>());
+        }
+
+        if (root == null) {
+            nodes.get(level).add(null);
+        } else {
+            nodes.get(level).add(root.key);
+            this.print(root.left, nodes, level+1);
+            this.print(root.right, nodes, level+1);
+        }
+    }
+
+    private BinarySearchTreeNode<Key,Value>
+        find(BinarySearchTreeNode<Key,Value> root, Key key, Value val) {
+        if (root == null) {
+            return null;
+        }
+
+        final int c = key.compareTo(root.key);
+
+        if (c == 0) {
+            if ((val == null) || (root.value == val)) {
+                return root;
+            }
+            while (root.right != null) {
+                this.find(root.right, key, val);
+            }
+            return null;
+        } else if (c < 0) {
+            return this.find(root.left, key, val);
+        }
+
+        return this.find(root.right, key, val);
+    }
+
+    private BinarySearchTreeNode<Key,Value> maximum(BinarySearchTreeNode<Key,Value> n) {
+        if (n == null) {
+            return null;
+        } else if (n.right == null) {
+            return n;
+        } else {
+            return this.maximum(n.right);
+        }
+    }
+
+    public BinarySearchTreeNode<Key,Value> findNode(Key key, Value val) {
+        final BinarySearchTreeNode<Key,Value> n = this.find(this.root, key, val);
+        return n;
+    }
+
+    private void serialise(StringBuffer sb, BinarySearchTreeNode<Key,Value> n) {
+        if (n == null) {
+            sb.append("N|");
+        } else {
+            sb.append(n.key + "|");
+
+            this.serialise(sb, n.left);
+            this.serialise(sb, n.right);
+        }
+    }
+
+    private void serialiseAll(StringBuffer sb, BinarySearchTreeNode<Key,Value> n) {
+        if (n == null) {
+            sb.append("N|");
+        } else {
+            sb.append(n.key + "," + n.value + "|");
+
+            this.serialiseAll(sb, n.left);
+            this.serialiseAll(sb, n.right);
+        }
+    }
+
+    public BinarySearchTree() {
+        this.root = null;
+    }
+
+    public void insert(Key key, Value val) {
+        BinarySearchTreeNode<Key,Value> n
+            = new BinarySearchTreeNode<Key,Value>(key, val);
+
+        this.root = this.insert(this.root, n);
+    }
+
+    public Key minimum() {
+        if (this.root == null) {
+            throw new IllegalStateException("mimimum - empty tree.");
+        }
+
+        return this.minimum(this.root).key;
+    }
+
+    public Key maximum() {
+        if (this.root == null) {
+            throw new IllegalStateException("maximum - empty tree.");
+        }
+
+        return this.maximum(this.root).key;
+    }
+
+    public Value find(Key key) {
+        final BinarySearchTreeNode<Key,Value> n = this.find(this.root, key, null);
+        if (n != null) {
+            return n.value;
+        }
+
+        return null;
+    }
+
+    public Key successor(Key key) {
+        final BinarySearchTreeNode<Key,Value> n = this.successorNode(key);
+        if (n == null) {
+            return null;
+        }
+
+        return n.key;
+    }
+
+    public BinarySearchTreeNode<Key,Value> successorNode(Key key) {
+        final BinarySearchTreeNode<Key,Value> n = this.find(this.root, key, null);
+        return this.successorNode(n);
+    }
+
+    public BinarySearchTreeNode<Key,Value> successorNode(BinarySearchTreeNode<Key,Value> n) {
+        if (n == null) {
+            throw new IllegalStateException("successorNode - No node with specified key can be found.");
+        }
+
+        if (n.right != null) {
+            return this.minimum(n.right);
+        }
+
+        while (n.parent != null && n.parent.right == n) {
+            n = n.parent;
+        }
+
+        if (n.parent == null) {
+            return null;
+        }
+
+        if (n.parent.right == null) {
+            return n.parent;
+        }
+
+        final BinarySearchTreeNode<Key,Value> n1 = this.minimum(n.parent.right);
+        final BinarySearchTreeNode<Key,Value> n2 = n.parent;
+        final Key k1 = n1.key;
+        final Key k2 = n2.key;
+        return k1.compareTo(k2) < 0 ? n1 : n2;
+    }
+
+    public Key predecessor(Key key) {
+        final BinarySearchTreeNode<Key,Value> n = this.predecessorNode(key);
+        if (n == null) {
+            return null;
+        }
+        return n.key;
+    }
+
+    public BinarySearchTreeNode<Key,Value> predecessorNode(Key key) {
+        final BinarySearchTreeNode<Key,Value> n = this.find(this.root, key, null);
+        return this.predecessorNode(n);
+    }
+
+    public BinarySearchTreeNode<Key,Value> predecessorNode(BinarySearchTreeNode<Key,Value> n) {
+        if (n == null) {
+            throw new IllegalStateException("predeccessorNode - No node with specified key can be found.");
+        }
+
+        if (n.left != null) {
+            return this.maximum(n.left);
+        }
+
+        while (n.parent != null && n.parent.left == n) {
+            n = n.parent;
+        }
+
+        if (n.parent == null) {
+            return null;
+        }
+
+        if (n.parent.left == null) {
+            return n.parent;
+        }
+
+        final BinarySearchTreeNode<Key,Value> n1 = this.maximum(n.parent.left);
+        final BinarySearchTreeNode<Key,Value> n2 = n.parent;
+        final Key k1 = n1.key;
+        final Key k2 = n2.key;
+        return k1.compareTo(k2) > 0 ? n1 : n2;
+    }
+
+    public void remove(Key key, Value val) {
+        final BinarySearchTreeNode<Key,Value> n = this.findNode(key, val);
+        this.remove(n);
+    }
+
+    public void remove(Key key) {
+        this.remove(key, null);
+    }
+
+    public void remove(BinarySearchTreeNode<Key,Value> n) {
+        if (n != null) {
+            // 1. n is a leaf.
+            if ((n.left == null) && (n.right == null)) {
+                if (n.parent != null) {
+                    if (n.parent.left == n) {
+                        n.parent.left = null;
+                    } else {
+                        n.parent.right = null;
+                    }
+                } else {
+                    this.root = null;
+                }
+            }
+            // 2. n has a right child only.
+            else if ((n.left == null) ) {
+                if (n.parent != null) {
+                    if (n.parent.left == n) {
+                        n.parent.left = n.right;
+                    } else {
+                        n.parent.right = n.right;
+                    }
+                } else {
+                    this.root = n.right;
+                }
+                n.right.parent = n.parent;
+            }
+            // 3. n has a left child only.
+            else if ((n.right == null)) {
+                if (n.parent != null) {
+                    if (n.parent.left == n) {
+                        n.parent.left = n.left;
+                    } else {
+                        n.parent.right = n.left;
+                    }
+                } else {
+                    this.root = n.left;
+                }
+                n.left.parent = n.parent;
+            }
+            // 4. n has both children.
+            else if ((n.left != null) && (n.right != null)) {
+                if (n.parent != null) {
+                    if (n.parent.right == n) {
+                        n.parent.right = n.right;
+                        this.minimum(n.right).left = n.left;
+                        n.parent.right.parent = n.parent;
+                    } else {
+                        n.parent.left = n.right;
+                        this.minimum(n.right).left = n.left;
+                        n.parent.left.parent = n.parent;
+                    }
+                } else {
+                    BinarySearchTreeNode<Key,Value> p = this.minimum(n.right);
+                    p.left = n.left;
+                    n.left.parent = p;
+                    this.root = n.right;
+                    this.root.parent = null;
+                }
+            }
+        }
+    }
+
+    public boolean empty() {
+        return this.root == null;
+    }
+
+    public void visit(BinarySearchTreeVisitor<Key, Value> visitor) {
+        visitor.visit(this.root);
+    }
+
+    public void print() {
+        final LinkedList<LinkedList<Key>> nodes = new LinkedList<LinkedList<Key>>();
+        this.print(this.root, nodes, 0);
+
+        for (int i = 0; i < nodes.size(); ++i) {
+            final LinkedList<Key> l = nodes.get(i);
+            System.out.print("L" + i + ": ");
+            for (Key k : l) {
+                if (k == null) {
+                    System.out.print("null ");
+                } else {
+                    System.out.print(k.toString() + " ");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public String serialise() {
+        final StringBuffer sb = new StringBuffer();
+        this.serialise(sb, this.root);
+        return sb.toString();
+    }
+
+    public String serialiseAll() {
+        final StringBuffer sb = new StringBuffer();
+        this.serialiseAll(sb, this.root);
+        return sb.toString();
+    }
 }

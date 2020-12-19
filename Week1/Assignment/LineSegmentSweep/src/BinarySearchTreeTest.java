@@ -1,387 +1,476 @@
-import static org.junit.Assert.assertEquals;
-
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class BinarySearchTreeTest {
 
-	@Test
-	void test0() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		
-		assertEquals(tree.toString(), "5.0 ");
-	}
+    @Test
+    void TestInsert() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+        for (int i = 0; i < 10; ++i) {
+            bst.insert(i, i);
+        }
 
-	@Test
-	void test1() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		
-		assertEquals("3.0 5.0 ", tree.toString());
-	}
+        Assertions.assertEquals("0|N|1|N|2|N|3|N|4|N|5|N|6|N|7|N|8|N|9|N|N|", bst.serialise());
+    }
 
-	@Test
-	void test2() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(4, new Event(EventType.UNKNOWN,null,null));
+    @Test
+    void TestInsert2() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+        bst.insert(5,null);
+        bst.insert(0,null);
+        bst.insert(8,null);
+        bst.insert(2,null);
+        bst.insert(6,null);
+        bst.insert(9,null);
+        bst.insert(1,null);
+        bst.insert(7,null);
+        bst.insert(3,null);
+        bst.insert(4,null);
 
-		assertEquals("1.0 3.0 4.0 5.0 ", tree.toString());
-	}
+        Assertions.assertEquals("5|0|N|2|1|N|N|3|N|4|N|N|8|6|N|7|N|N|9|N|N|", bst.serialise());
+    }
 
-	@Test
-	void test3() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(4, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(9, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(8, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(6, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		
-		assertEquals("0.0 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 ", tree.toString());
-	}
-	
-	@Test
-	void test4() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(4, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(9, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(8, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(6, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		
-		BSTNode b = tree.find(5);
-		assertEquals(5, b.key, 1e-9);
-	}
+    @Test
+    void TestInsert3() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+        bst.insert(5,null);
+        bst.insert(9,null);
+        bst.insert(4,null);
+        bst.insert(7,null);
+        bst.insert(3,null);
+        bst.insert(5,null);
+        bst.insert(4,null);
+        bst.insert(4,null);
+        bst.insert(3,null);
 
-	@Test
-	void test5() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(4, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(9, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(8, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(6, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		
-		BSTNode b = tree.find(8);
-		assertEquals(8, b.key, 1e-9);
-	}
+        Assertions.assertEquals("5|4|3|N|3|N|N|4|N|4|N|N|9|7|5|N|N|N|N|", bst.serialise());
+    }
 
-	@Test
-	void test6() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(4, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(9, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(8, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(6, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		
-		BSTNode b = tree.find(1);
-		assertEquals(1, b.key, 1e-9);
-	}
-	
-	@Test
-	void test7() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		
-		assertEquals(3, tree.findSuccessor(1).key, 1e-9);
-	}
-	
-	@Test
-	void test8() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		
-		assertEquals(5, tree.findSuccessor(3).key, 1e-9);
-	}
+    @Test
+    void TestMinimum1() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+        bst.insert(5,null);
+        bst.insert(0,null);
+        bst.insert(8,null);
+        bst.insert(2,null);
+        bst.insert(6,null);
+        bst.insert(9,null);
+        bst.insert(1,null);
+        bst.insert(7,null);
+        bst.insert(3,null);
+        bst.insert(4,null);
 
-	@Test
-	void test9() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		
-		assertEquals(7, tree.findSuccessor(5).key, 1e-9);
-	}
+        Assertions.assertEquals(0, bst.minimum());
+    }
 
-	@Test
-	void test10() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		
-		assertEquals(null, tree.findSuccessor(7));
-	}
+    @Test
+    void TestMinimum2() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+        bst.insert(5,null);
+        bst.insert(8,null);
+        bst.insert(2,null);
+        bst.insert(6,null);
+        bst.insert(9,null);
+        bst.insert(1,null);
+        bst.insert(7,null);
+        bst.insert(3,null);
+        bst.insert(4,null);
 
-	@Test
-	void test11() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		
-		assertEquals(null, tree.findPredecessor(1));
-	}
+        Assertions.assertEquals(1, bst.minimum());
+    }
 
-	@Test
-	void test12() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		
-		assertEquals(1, tree.findPredecessor(3).key, 1e-9);
-	}
-	
-	@Test
-	void test13() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		
-		assertEquals(3, tree.findPredecessor(5).key, 1e-9);
-	}
+    @Test
+    void TestFind1() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+        bst.insert(5,345);
+        bst.insert(8,2321);
+        bst.insert(2,5453);
+        bst.insert(6,434);
+        bst.insert(5,1111);
+        bst.insert(9,7868);
+        bst.insert(1,2342);
+        bst.insert(7,453);
+        bst.insert(3,222);
+        bst.insert(4,899);
 
-	@Test
-	void test14() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		
-		assertEquals(5, tree.findPredecessor(7).key, 1e-9);
-	}
-	
-	@Test
-	void testEraseNode1() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		
-		tree.erase(2);
-		
-		final String actual = tree.toString();
-		final String expected = "0.0 1.0 ";
-		
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	void testEraseNode2() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		
-		tree.erase(3);
-		
-		final String actual = tree.toString();
-		final String expected = "0.0 1.0 2.0 ";
-		
-		assertEquals(expected, actual);
-	}
+        Assertions.assertEquals(345, bst.find(5));
+        Assertions.assertEquals(2321, bst.find(8));
+        Assertions.assertEquals(899, bst.find(4));
+        Assertions.assertEquals(null, bst.find(13));
+    }
 
-	@Test
-	void testEraseNode3() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		
-		tree.erase(2);
-		
-		final String actual = tree.toString();
-		final String expected = "0.0 1.0 3.0 ";
-		
-		assertEquals(expected, actual);
-	}
+    @Test
+    void TestSuccessor() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
 
-	@Test
-	void testEraseNode4() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(4, new Event(EventType.UNKNOWN,null,null));
-		
-		tree.erase(3);
-		
-		final String actual = tree.toString();
-		final String expected = "0.0 1.0 2.0 4.0 ";
-		
-		assertEquals(expected, actual);
-	}
+        bst.insert(5,5);
+        bst.insert(1,1);
+        bst.insert(10,10);
+        bst.insert(4,4);
+        bst.insert(3,3);
 
-	@Test
-	void testEraseNode5() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(4, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		
-		tree.erase(3);
-		
-		final String actual = tree.toString();
-		final String expected = "0.0 1.0 2.0 4.0 5.0 ";
-		
-		assertEquals(expected, actual);
-	}
+        Assertions.assertEquals(5, bst.successor(4));
+    }
 
-	@Test
-	void testEraseNode6() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(5, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(4, new Event(EventType.UNKNOWN,null,null));
-		
-		tree.erase(3);
-		
-		final String actual = tree.toString();
-		final String expected = "0.0 1.0 2.0 4.0 5.0 ";
-		
-		assertEquals(expected, actual);
-	}
+    @Test
+    void TestSuccessor2() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
 
-	@Test
-	void testEraseNode7() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(9, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(4, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(7, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(6, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(8, new Event(EventType.UNKNOWN,null,null));
-		
-		tree.erase(3);
-		
-		final String actual = tree.toString();
-		final String expected = "0.0 1.0 2.0 4.0 6.0 7.0 8.0 9.0 ";
-		
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	void testEraseNode8() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(-2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(-1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(-3, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		
-		tree.erase(0);
-		
-		final String actual = tree.toString();
-		final String expected = "-3.0 -2.0 -1.0 1.0 2.0 3.0 ";
-		
-		assertEquals(expected, actual);
-	}
+        bst.insert(5,5);
+        bst.insert(1,1);
+        bst.insert(10,10);
+        bst.insert(4,4);
+        bst.insert(3,3);
 
-	@Test
-	void testEraseNode9() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(2, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(1, new Event(EventType.UNKNOWN,null,null));
-		tree.insert(3, new Event(EventType.UNKNOWN,null,null));
-		
-		tree.erase(0);
-		
-		final String actual = tree.toString();
-		final String expected = "1.0 2.0 3.0 ";
-		
-		assertEquals(expected, actual);
-	}
+        Assertions.assertEquals(10, bst.successor(5));
+    }
 
+    @Test
+    void TestSuccessor3() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
 
-	@Test
-	void testEraseNode0() {
-		final BinarySearchTree tree = new BinarySearchTree();
-		
-		tree.insert(0, new Event(EventType.UNKNOWN,null,null));
-		
-		tree.erase(0);
-		
-		final String actual = tree.toString();
-		final String expected = "";
-		
-		assertEquals(expected, actual);
-	}
+        bst.insert(5,5);
+        bst.insert(1,1);
+        bst.insert(10,10);
+        bst.insert(4,4);
+        bst.insert(3,3);
 
+        Assertions.assertEquals(null, bst.successor(10));
+    }
+
+    @Test
+    void TestPredecessor() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(1,1);
+        bst.insert(10,10);
+        bst.insert(3,3);
+        bst.insert(4,4);
+
+        Assertions.assertEquals(4, bst.predecessor(5));
+    }
+
+    @Test
+    void TestPredecessor2() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(1,1);
+        bst.insert(10,10);
+        bst.insert(3,3);
+        bst.insert(4,4);
+
+        Assertions.assertEquals(5, bst.predecessor(10));
+    }
+
+    @Test
+    void TestPredecessor3() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(1,1);
+        bst.insert(10,10);
+        bst.insert(3,3);
+        bst.insert(4,4);
+
+        Assertions.assertEquals(null, bst.predecessor(1));
+    }
+
+    @Test
+    void TestPredecessor4() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(1,1);
+        bst.insert(10,10);
+        bst.insert(3,3);
+        bst.insert(4,4);
+
+        Assertions.assertEquals(3, bst.predecessor(4));
+    }
+
+    @Test
+    void TestPredecessor5() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(1,1);
+        bst.insert(10,10);
+        bst.insert(3,3);
+        bst.insert(4,4);
+
+        Assertions.assertEquals(5, bst.predecessor(10));
+    }
+
+    @Test
+    void TestRemove() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(2,2);
+        bst.insert(7,7);
+        bst.insert(1,1);
+        bst.insert(3,3);
+        bst.insert(6,6);
+        bst.insert(9,9);
+        bst.insert(4,4);
+        bst.insert(10,10);
+
+        bst.remove(10,null);
+
+        Assertions.assertEquals("5|2|1|N|N|3|N|4|N|N|7|6|N|N|9|N|N|", bst.serialise());
+    }
+
+    @Test
+    void TestRemove2() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(2,2);
+        bst.insert(7,7);
+        bst.insert(1,1);
+        bst.insert(3,3);
+        bst.insert(6,6);
+        bst.insert(9,9);
+        bst.insert(4,4);
+        bst.insert(10,10);
+
+        bst.remove(6,null);
+
+        Assertions.assertEquals("5|2|1|N|N|3|N|4|N|N|7|N|9|N|10|N|N|", bst.serialise());
+    }
+
+    @Test
+    void TestRemove3() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(2,2);
+        bst.insert(7,7);
+        bst.insert(1,1);
+        bst.insert(3,3);
+        bst.insert(6,6);
+        bst.insert(9,9);
+        bst.insert(4,4);
+        bst.insert(10,10);
+
+        bst.remove(4,null);
+
+        Assertions.assertEquals("5|2|1|N|N|3|N|N|7|6|N|N|9|N|10|N|N|", bst.serialise());
+    }
+
+    @Test
+    void TestRemove4() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(2,2);
+        bst.insert(7,7);
+        bst.insert(1,1);
+        bst.insert(3,3);
+        bst.insert(6,6);
+        bst.insert(9,9);
+        bst.insert(4,4);
+        bst.insert(10,10);
+
+        bst.remove(9,null);
+
+        Assertions.assertEquals("5|2|1|N|N|3|N|4|N|N|7|6|N|N|10|N|N|", bst.serialise());
+    }
+
+    @Test
+    void TestRemove5() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(2,2);
+        bst.insert(7,7);
+        bst.insert(1,1);
+        bst.insert(3,3);
+        bst.insert(6,6);
+        bst.insert(9,9);
+        bst.insert(4,4);
+        bst.insert(10,10);
+
+        bst.remove(3,null);
+
+        Assertions.assertEquals("5|2|1|N|N|4|N|N|7|6|N|N|9|N|10|N|N|", bst.serialise());
+    }
+
+    @Test
+    void TestRemove6() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+
+        bst.remove(5,null);
+
+        Assertions.assertEquals("N|", bst.serialise());
+    }
+
+    @Test
+    void TestRemove7() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(1,1);
+
+        bst.remove(5,null);
+
+        Assertions.assertEquals("1|N|N|", bst.serialise());
+    }
+
+    @Test
+    void TestRemove8() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(6,6);
+
+        bst.remove(5,null);
+
+        Assertions.assertEquals("6|N|N|", bst.serialise());
+    }
+
+    @Test
+    void TestRemove9() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(2,2);
+        bst.insert(7,7);
+        bst.insert(1,1);
+        bst.insert(3,3);
+        bst.insert(6,6);
+        bst.insert(9,9);
+        bst.insert(4,4);
+        bst.insert(10,10);
+
+        bst.remove(7,null);
+
+        Assertions.assertEquals("5|2|1|N|N|3|N|4|N|N|9|6|N|N|10|N|N|", bst.serialise());
+    }
+
+    @Test
+    void TestRemove10() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(2,2);
+        bst.insert(7,7);
+        bst.insert(1,1);
+        bst.insert(3,3);
+        bst.insert(6,6);
+        bst.insert(9,9);
+        bst.insert(4,4);
+        bst.insert(10,10);
+
+        bst.remove(2,null);
+
+        Assertions.assertEquals("5|3|1|N|N|4|N|N|7|6|N|N|9|N|10|N|N|", bst.serialise());
+    }
+
+    @Test
+    void TestRemove11() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(2,2);
+        bst.insert(7,7);
+        bst.insert(1,1);
+        bst.insert(3,3);
+        bst.insert(6,6);
+        bst.insert(9,9);
+        bst.insert(4,4);
+        bst.insert(10,10);
+
+        bst.remove(5,null);
+
+        Assertions.assertEquals("7|6|2|1|N|N|3|N|4|N|N|N|9|N|10|N|N|", bst.serialise());
+    }
+
+    @Test
+    void TestRemove12() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(2,2);
+        bst.insert(7,7);
+        bst.insert(1,1);
+        bst.insert(3,3);
+        bst.insert(6,6);
+        bst.insert(9,9);
+        bst.insert(4,4);
+        bst.insert(10,10);
+
+        Assertions.assertEquals("5|2|1|N|N|3|N|4|N|N|7|6|N|N|9|N|10|N|N|", bst.serialise());
+
+        bst.remove(5,null);
+        Assertions.assertEquals("7|6|2|1|N|N|3|N|4|N|N|N|9|N|10|N|N|", bst.serialise());
+
+        bst.remove(6,null);
+        Assertions.assertEquals("7|2|1|N|N|3|N|4|N|N|9|N|10|N|N|", bst.serialise());
+
+        bst.remove(7,null);
+        Assertions.assertEquals("9|2|1|N|N|3|N|4|N|N|10|N|N|", bst.serialise());
+
+        bst.remove(3,null);
+        Assertions.assertEquals("9|2|1|N|N|4|N|N|10|N|N|", bst.serialise());
+
+        bst.remove(2,null);
+        Assertions.assertEquals("9|4|1|N|N|N|10|N|N|", bst.serialise());
+
+        bst.remove(4,null);
+        Assertions.assertEquals("9|1|N|N|10|N|N|", bst.serialise());
+
+        bst.remove(4,null);
+        Assertions.assertEquals("9|1|N|N|10|N|N|", bst.serialise());
+
+        bst.remove(9,null);
+        Assertions.assertEquals("10|1|N|N|N|", bst.serialise());
+    }
+
+    @Test
+    void TestEmpty() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        Assertions.assertFalse(bst.empty());
+    }
+
+    @Test
+    void TestEmpty2() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        Assertions.assertTrue(bst.empty());
+    }
 }

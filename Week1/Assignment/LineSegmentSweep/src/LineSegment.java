@@ -1,18 +1,3 @@
-enum InxDim {
-    UNKNOWN,
-    POINT,
-    LINE
-}
-
-class InxData {
-    public Coordinate coord;
-    public InxDim dim;
-
-    InxData() {
-        this.coord = null;
-        this.dim = InxDim.UNKNOWN;
-    }
-}
 
 public class LineSegment {
     public Integer id;

@@ -90,11 +90,16 @@ public class LineSegment {
      *   specified x-ordinate that is coi with this LineSegment.
      * @return null If x is out of range of the x-extent
      *    of this LineSegment.
+     * @return start.y for a vertical LineSegment coi with x.
      */
     public Double y(double x) {
 
         if ((x < this.minx) || (x > this.maxx)) {
             return null;
+        }
+
+        if (this.isVertical && (this.start.x == x)) {
+            return this.start.y;
         }
 
         return (this.gradient * x) + this.intercept;
@@ -113,6 +118,10 @@ public class LineSegment {
 
         if ((y < this.miny) || (y > this.maxy)) {
             return null;
+        }
+
+        if (this.isHorizontal && (this.start.y == y)) {
+            return this.start.x;
         }
 
         return (y - this.intercept) / this.gradient;
@@ -160,7 +169,7 @@ public class LineSegment {
             return false;
         }
 
-        return y == c.x;
+        return y == c.y;
     }
 
     /**

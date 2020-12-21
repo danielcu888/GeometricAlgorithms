@@ -68,9 +68,7 @@ public class LineSegment {
             // Horizontal line.
 
             this.gradient = 0;
-            if ((this.start.x * this.end.x) <= 0) {
-                this.intercept = this.start.y;
-            }
+            this.intercept = this.start.y;
         } else {
 
             // General case.
@@ -140,11 +138,10 @@ public class LineSegment {
     }
 
     /**
-     * Return the y-intercept of this LineSegment.
+     * Return the y-intercept of the infinite line associated
+     * with this LineSegment.
      * @return The y-intercept of this LineSegment.
-     * @return Double.NaN if there is no y-intercept.
-     * @return start.y if this LineSegment is horizontal
-     *   and intercepts the y-axis.
+     * @return start.y if this LineSegment is horizontal.
      */
     public double intercept() {
         return this.intercept;
@@ -162,6 +159,14 @@ public class LineSegment {
 
         if (c == null) {
             throw new NullPointerException("contains - c is null.");
+        }
+
+        if (this.isVertical) {
+            if (this.start.x == c.x) {
+                return (c.y >= this.miny) && (c.y <= this.maxy);
+            } else {
+                return false;
+            }
         }
 
         final Double y = this.y(c.x);
@@ -195,40 +200,125 @@ public class LineSegment {
 
         InxData ret = null;
 
+        // Handle scenarios where one or both lines are vertical.
+
+        if (ls1.isVertical && ls2.isVertical) {
+            // Both lines are vertical.
+
+            if (ls1.start.x == ls2.start.x) {
+                // Both vertical lines share same x value.
+
+                int count1 = 0;
+                int count2 = 0;
+                final boolean ls1Cls2S = ls1.contains(ls2.start);
+                if (ls1Cls2S) {
+                    ++count1;
+                }
+                final boolean ls1Cls2E = ls1.contains(ls2.end);
+                if (ls1Cls2E) {
+                    ++count1;
+                }
+                final boolean ls2Cls1S = ls2.contains(ls1.start);
+                if (ls2Cls1S) {
+                    ++count2;
+                }
+                final boolean ls2Cls1E = ls2.contains(ls1.end);
+                if (ls2Cls1E) {
+                    ++count2;
+                }
+
+                if ((count1 != 0) || (count2 != 0)) {
+                    ret = new InxData();
+                    if (ls1Cls2S) {
+                        ret.coord = ls2.start;
+                    } else if (ls1Cls2E) {
+                        ret.coord = ls2.end;
+                    } else if (ls2Cls1S) {
+                        ret.coord = ls1.start;
+                    } else if (ls2Cls1E) {
+                        ret.coord = ls1.end;
+                    }
+
+                    if ((count1 == 1) && (count2 == 1)) {
+                        ret.dim = InxDim.POINT;
+                    } else {
+                        ret.dim = InxDim.LINE;
+                    }
+                }
+            }
+
+            return ret;
+
+        } else if (ls1.isVertical) {
+            if ((ls2.minx <= ls1.start.x) && (ls2.maxx >= ls1.start.x)) {
+                // Point intersection.
+                ret = new InxData();
+                ret.coord = new Coordinate(ls1.start.x, ls2.y(ls1.start.x));
+                ret.dim = InxDim.POINT;
+            }
+
+            return ret;
+        } else if (ls2.isVertical) {
+            if ((ls1.minx <= ls2.start.x) && (ls1.maxx >= ls2.start.x)) {
+                // Point intersection.
+                ret = new InxData();
+                ret.coord = new Coordinate(ls2.start.x, ls1.y(ls2.start.x));
+                ret.dim = InxDim.POINT;
+            }
+            return ret;
+        }
+
+        // Handle scenarios where neither line is vertical.
+
         if (ls1.gradient() == ls2.gradient()) {
 
             // Identical gradients - either line inx or no intersections.
 
             if (ls1.intercept() != ls2.intercept()) {
 
-                // Identical gradients, different intercepts - No intersection.
+                // Identical, non-infinite gradients, different intercepts,
+                // - No intersection.
                 return ret;
+            }
+
+            // Identical gradients, identical intercepts - line intersection.
+
+            if (ls1.contains(ls2.start)) {
+
+                // ls2.start is contained by ls1.
+
+                ret = new InxData();
+                ret.coord = ls2.start;
+                ret.dim = InxDim.LINE;
+
+            } else if (ls1.contains(ls2.end)) {
+
+                // ls2.end is contained by ls1.
+
+                ret = new InxData();
+                ret.coord = ls2.end;
+                ret.dim = InxDim.LINE;
+
+            } else if (ls2.contains(ls1.start)) {
+
+                // ls1.start is contained by ls2.
+
+                ret = new InxData();
+                ret.coord = ls1.start;
+                ret.dim = InxDim.LINE;
+
+            } else if (ls2.contains(ls1.end)) {
+
+                // ls1.end is contained by ls2.
+
+                ret = new InxData();
+                ret.coord = ls1.end;
+                ret.dim = InxDim.LINE;
 
             } else {
 
-                // Identical gradients, identical intercepts - line intersection.
-
-                if (ls1.contains(ls2.start)) {
-
-                    // ls2.start is contained by ls1.
-
-                    ret = new InxData();
-                    ret.coord = ls2.start;
-                    ret.dim = InxDim.LINE;
-
-                } else if (ls1.contains(ls2.end)) {
-
-                    // ls2.end is contained by ls1.
-
-                    ret = new InxData();
-                    ret.coord = ls2.end;
-                    ret.dim = InxDim.LINE;
-
-                } else {
-
-                    // Neither ls2 end point is contained by ls1 - No intersections.
-                    return ret;
-                }
+                // No end point contained - No intersections.
+                return ret;
             }
         } else {
 

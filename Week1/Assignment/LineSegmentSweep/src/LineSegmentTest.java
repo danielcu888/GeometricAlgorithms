@@ -67,7 +67,7 @@ class LineSegmentTest {
 
         assertEquals(0,ls.id);
         assertEquals(0,ls.gradient());
-        assert(Double.isNaN(ls.intercept()));
+        assertEquals(1,ls.intercept());
     }
 
     @Test
@@ -239,7 +239,7 @@ class LineSegmentTest {
         final Coordinate s = new Coordinate(1.0, 1.0);
         final Coordinate e = new Coordinate(2.0, 1.0);
         final LineSegment ls = new LineSegment(0,s,e);
-        assert(Double.isNaN(ls.intercept()));
+        assertEquals(1,ls.intercept());
     }
 
     @Test
@@ -255,7 +255,7 @@ class LineSegmentTest {
         final Coordinate s = new Coordinate(-2.0, 1.0);
         final Coordinate e = new Coordinate(-1.0, 1.0);
         final LineSegment ls = new LineSegment(0,s,e);
-        assert(Double.isNaN(ls.intercept()));
+        assertEquals(1,ls.intercept());
     }
 
     @Test
@@ -312,5 +312,212 @@ class LineSegmentTest {
         final Coordinate e = new Coordinate(10.0, 10.0);
         final LineSegment ls = new LineSegment(0,s,e);
         assert(!ls.contains(new Coordinate(1,2)));
+    }
+
+    @Test
+    void testIntersection() {
+        final Coordinate s1 = new Coordinate(-10.0, 0.0);
+        final Coordinate e1 = new Coordinate(10.0, 0.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(0.0, -10.0);
+        final Coordinate e2 = new Coordinate(0.0, 10.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls1,ls2);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(0,0)));
+        assertEquals(InxDim.POINT,inx.dim);
+    }
+
+    @Test
+    void testIntersection1() {
+        final Coordinate s1 = new Coordinate(-10.0, 0.0);
+        final Coordinate e1 = new Coordinate(10.0, 0.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(0.0, 0.0);
+        final Coordinate e2 = new Coordinate(0.0, 10.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls1,ls2);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(0,0)));
+        assertEquals(InxDim.POINT,inx.dim);
+    }
+
+    @Test
+    void testIntersection2() {
+        final Coordinate s1 = new Coordinate(-10.0, 0.0);
+        final Coordinate e1 = new Coordinate(10.0, 0.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(0.0, -10.0);
+        final Coordinate e2 = new Coordinate(0.0, 0.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls1,ls2);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(0,0)));
+        assertEquals(InxDim.POINT,inx.dim);
+    }
+
+    @Test
+    void testIntersection3() {
+        final Coordinate s1 = new Coordinate(0.0, 0.0);
+        final Coordinate e1 = new Coordinate(10.0, 0.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(5.0, 0.0);
+        final Coordinate e2 = new Coordinate(15.0, 0.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls1,ls2);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(5,0)));
+        assertEquals(InxDim.LINE,inx.dim);
+    }
+
+    @Test
+    void testIntersection4() {
+        final Coordinate s1 = new Coordinate(0.0, 0.0);
+        final Coordinate e1 = new Coordinate(1.0, 1.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(2.0, 2.0);
+        final Coordinate e2 = new Coordinate(3.0, 3.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls1,ls2);
+
+        assertEquals(null,inx);
+    }
+
+    @Test
+    void testIntersection5() {
+        final Coordinate s1 = new Coordinate(0.0, -10.0);
+        final Coordinate e1 = new Coordinate(0.0, 10.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(0.0, -5.0);
+        final Coordinate e2 = new Coordinate(0.0, 5.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls1,ls2);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(0,-5)));
+        assertEquals(InxDim.LINE,inx.dim);
+    }
+
+    @Test
+    void testIntersection6() {
+        final Coordinate s1 = new Coordinate(0.0, -10.0);
+        final Coordinate e1 = new Coordinate(0.0, 10.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(0.0, 5.0);
+        final Coordinate e2 = new Coordinate(0.0, -5.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls1,ls2);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(0,5)));
+        assertEquals(InxDim.LINE,inx.dim);
+    }
+
+    @Test
+    void testIntersection7() {
+        final Coordinate s1 = new Coordinate(0.0, -10.0);
+        final Coordinate e1 = new Coordinate(0.0, 10.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(0.0, -5.0);
+        final Coordinate e2 = new Coordinate(0.0, 5.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls2,ls1);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(0,-5)));
+        assertEquals(InxDim.LINE,inx.dim);
+    }
+
+    @Test
+    void testIntersection8() {
+        final Coordinate s1 = new Coordinate(0.0, 10.0);
+        final Coordinate e1 = new Coordinate(0.0, -10.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(0.0, 5.0);
+        final Coordinate e2 = new Coordinate(0.0, -5.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls2,ls1);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(0,5)));
+        assertEquals(InxDim.LINE,inx.dim);
+    }
+
+    @Test
+    void testIntersection9() {
+        final Coordinate s1 = new Coordinate(0.0, 0.0);
+        final Coordinate e1 = new Coordinate(0.0, 10.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(-5.0, 0.0);
+        final Coordinate e2 = new Coordinate(5.0, 10.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls1,ls2);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(0,5)));
+        assertEquals(InxDim.POINT,inx.dim);
+    }
+
+    @Test
+    void testIntersection10() {
+        final Coordinate s1 = new Coordinate(0.0, 0.0);
+        final Coordinate e1 = new Coordinate(0.0, 10.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(-5.0, 0.0);
+        final Coordinate e2 = new Coordinate(5.0, 10.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls2,ls1);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(0,5)));
+        assertEquals(InxDim.POINT,inx.dim);
+    }
+
+    @Test
+    void testIntersection11() {
+        final Coordinate s1 = new Coordinate(-10.0, 0.0);
+        final Coordinate e1 = new Coordinate(0.0, 0.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(0.0, 0.0);
+        final Coordinate e2 = new Coordinate(10.0, 10.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls1,ls2);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(0,0)));
+        assertEquals(InxDim.POINT,inx.dim);
+    }
+
+    @Test
+    void testIntersection12() {
+        final Coordinate s1 = new Coordinate(0.0, -10.0);
+        final Coordinate e1 = new Coordinate(0.0, 0.0);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(0.0, 0.0);
+        final Coordinate e2 = new Coordinate(0.0, 10.0);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls1,ls2);
+
+        assertEquals(0,inx.coord.compareTo(new Coordinate(0,0)));
+        assertEquals(InxDim.POINT,inx.dim);
     }
 }

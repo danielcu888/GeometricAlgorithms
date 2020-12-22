@@ -1,57 +1,143 @@
 import java.util.LinkedList;
 
-class BinarySearchTreeNode<Key extends Comparable<Key>, Value> {
-
-    public BinarySearchTreeNode(Key key_, Value val_) {
-        this.key = key_;
-        this.value = val_;
-        this.left = null;
-        this.right = null;
-        this.parent = null;
-    }
-
-    public Key key;
-    public Value value;
-    public BinarySearchTreeNode<Key,Value> left;
-    public BinarySearchTreeNode<Key,Value> right;
-    public BinarySearchTreeNode<Key,Value> parent;
-}
-
-interface BinarySearchTreeVisitor<Key extends Comparable<Key>, Value> {
-
-    public void visit(BinarySearchTreeNode<Key, Value> node);
-}
-
+/**
+ * A class representing a binary search tree.
+ * @param <Key> A Comparable Object type to store the key
+ *   of each node of this BinarySearchTree.
+ * @param <Value> The Object type used to store the value
+ *   of each node of this BinarySearchTree.
+ */
 public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 
-    private BinarySearchTreeNode<Key, Value> root;
+	// Private data members
+    private BinarySearchTreeNode<Key, Value> root = null;
 
+    // Private methods
+
+    /**
+     * Find the minimum of the specified BST.
+     * @param root The root node of the BST to be searched.
+     * @return The node of the specified BST with the
+     *   minimum value.
+     */
     private BinarySearchTreeNode<Key,Value> minimum(BinarySearchTreeNode<Key,Value> root) {
         if (root == null) {
             return null;
         } else if (root.left != null) {
+        	// Search left subtree.
             return this.minimum(root.left);
         } else {
+        	// root has no left child - it is the minimum.
             return root;
         }
     }
 
-    private BinarySearchTreeNode<Key,Value> insert(BinarySearchTreeNode<Key,Value> curr, BinarySearchTreeNode<Key,Value> n) {
-        if (curr == null) {
+    /**
+     * Find the maximum of the specified BST.
+     * @param root The root node of the BST to be searched.
+     * @return The node of the specified BST with the
+     *   maximum value.
+     */
+    private BinarySearchTreeNode<Key,Value> maximum(BinarySearchTreeNode<Key,Value> root) {
+        if (root == null) {
+            return null;
+        } else if (root.right != null) {
+        	// Search right subtree.
+            return this.maximum(root.right);        	
+        } else {
+        	// root has no right child - it is the maximum.
+            return root;
+        }
+    }
+
+    /**
+     * Find the node in the specified BST that has a key equal
+     * to that specified, and optionally, has value equal to
+     * that specified.
+     * @param root The root node of the BST to be searched.
+     * @param key The key to be matched.
+     * @param val The value to be matched. If null is specified
+     *   then value matching will not be used in addition to key
+     *   matching.
+     * @return The node in the specified BST that has a matching
+     *   key, and optionally, value specified.
+     */
+    private BinarySearchTreeNode<Key,Value> find(BinarySearchTreeNode<Key,Value> root, Key key, Value val) {
+        if (root == null) {
+            return null;
+        }
+
+        // Compare specified key with that of current node.
+        final int c = key.compareTo(root.key);
+
+        if (c == 0) {
+        	// Keys are equal.
+        	
+            if ((val == null) || (root.value == val)) {
+            	// We've matched values or the did not wish to
+            	// use value matching.
+                return root;
+            }
+            
+            // We are using value matching and did not match
+            // values with current node.
+            //
+        	// Check right subtree, since only there can
+        	// there exist nodes with keys equal to
+            // that of the current node.
+            this.find(root.right, key, val);
+            
+            // No matching node.
+            return null;
+            
+        } else if (c < 0) {
+            // key is less than that of current node -
+        	// search left subtree.
+        	return this.find(root.left, key, val);
+        }
+
+        // key is greater than that of current node -
+        // search right subtree.
+        return this.find(root.right, key, val);
+    }
+
+    /**
+     * Insert the specified node into the specified BST.
+     * @param root The root node of the target BST.
+     * @param n The node to be inserted.
+     * @return The updated root node of the target BST.
+     */
+    private BinarySearchTreeNode<Key,Value> insert(BinarySearchTreeNode<Key,Value> root, BinarySearchTreeNode<Key,Value> n) {
+        if (root == null) {
             return n;
         }
 
-        if (n.key.compareTo(curr.key) < 0) {
-            curr.left = this.insert(curr.left, n);
-            curr.left.parent = curr;
+        if (n.key.compareTo(root.key) < 0) {
+        	// insertion key is less than that of the current node -
+        	// insert into left subtree.
+        	root.left = this.insert(root.left, n);
+        	root.left.parent = root;
         } else {
-            curr.right = this.insert(curr.right, n);
-            curr.right.parent = curr;
+        	// insertion key is greater or equal to that of the current node -
+        	// insert into right subtree.
+        	root.right = this.insert(root.right, n);
+            root.right.parent = root;
         }
 
-        return curr;
+        // Return updated node.
+        return root;
     }
 
+    /**
+     * Print a specified BST to the standard output stream.
+     * @param root The root node of the BST to be printed.
+     * @param nodes A collection used to store collections
+     *   of nodes each containing the nodes at each level
+     *   of depth of the BST to be printed.
+     * @param level The current level at which root resides
+     *   in the host BST.
+     * @warning Only for use with public print() method.
+     */
     private void print(BinarySearchTreeNode<Key,Value> root, LinkedList<LinkedList<Key>> nodes, int level) {
         if (nodes.size() <= level) {
             nodes.add(level, new LinkedList<Key>());
@@ -66,76 +152,55 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         }
     }
 
-    private BinarySearchTreeNode<Key,Value>
-        find(BinarySearchTreeNode<Key,Value> root, Key key, Value val) {
+    /**
+     * Serialise the keys of the nodes of the specified BST
+     * as a '|' separated string with the following notation:
+     * 
+     * 'N' - null
+     * '<key>' - non-null node
+     * 
+     * Each node key is separated by terminating '|'s.
+     * 
+     * @param sb A buffer used to construct the desired string.
+     * @param root The root node of the BST to be serialised.
+     * @warning Only for use with public serialise() method.
+     */
+    private void serialise(StringBuffer sb, BinarySearchTreeNode<Key,Value> root) {
         if (root == null) {
-            return null;
-        }
-
-        final int c = key.compareTo(root.key);
-
-        if (c == 0) {
-            if ((val == null) || (root.value == val)) {
-                return root;
-            }
-            while (root.right != null) {
-                this.find(root.right, key, val);
-            }
-            return null;
-        } else if (c < 0) {
-            return this.find(root.left, key, val);
-        }
-
-        return this.find(root.right, key, val);
-    }
-
-    private BinarySearchTreeNode<Key,Value> maximum(BinarySearchTreeNode<Key,Value> n) {
-        if (n == null) {
-            return null;
-        } else if (n.right == null) {
-            return n;
-        } else {
-            return this.maximum(n.right);
-        }
-    }
-
-    public BinarySearchTreeNode<Key,Value> findNode(Key key, Value val) {
-        final BinarySearchTreeNode<Key,Value> n = this.find(this.root, key, val);
-        return n;
-    }
-
-    private void serialise(StringBuffer sb, BinarySearchTreeNode<Key,Value> n) {
-        if (n == null) {
             sb.append("N|");
         } else {
-            sb.append(n.key + "|");
+            sb.append(root.key + "|");
 
-            this.serialise(sb, n.left);
-            this.serialise(sb, n.right);
+            this.serialise(sb, root.left);
+            this.serialise(sb, root.right);
         }
     }
 
-    private void serialiseAll(StringBuffer sb, BinarySearchTreeNode<Key,Value> n) {
-        if (n == null) {
+    /**
+     * Serialise the data of the nodes of the specified BST
+     * as a '|' separated string with the following notation:
+     * 
+     * 'N' - null
+     * '<key>,<value>' - non-null node
+     * 
+     * Each node data is separated by terminating '|'s.
+     * 
+     * @param sb A buffer used to construct the desired string.
+     * @param root The root node of the BST to be serialised.
+     * @warning Only for use with public serialise() method.
+     */
+    private void serialiseAll(StringBuffer sb, BinarySearchTreeNode<Key,Value> root) {
+        if (root == null) {
             sb.append("N|");
         } else {
-            sb.append(n.key + "," + n.value + "|");
+            sb.append(root.key + "," + root.value + "|");
 
-            this.serialiseAll(sb, n.left);
-            this.serialiseAll(sb, n.right);
+            this.serialiseAll(sb, root.left);
+            this.serialiseAll(sb, root.right);
         }
     }
 
-    public BinarySearchTree() {
-        this.root = null;
-    }
-
-    public void insert(Key key, Value val) {
-        BinarySearchTreeNode<Key,Value> n
-            = new BinarySearchTreeNode<Key,Value>(key, val);
-
-        this.root = this.insert(this.root, n);
-    }
+    // Public methods
 
     public Key minimum() {
         if (this.root == null) {
@@ -151,8 +216,8 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         }
 
         return this.maximum(this.root).key;
-    }
-
+    }    
+    
     public Value find(Key key) {
         final BinarySearchTreeNode<Key,Value> n = this.find(this.root, key, null);
         if (n != null) {
@@ -160,6 +225,18 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         }
 
         return null;
+    }
+
+    public BinarySearchTreeNode<Key,Value> findNode(Key key, Value val) {
+        final BinarySearchTreeNode<Key,Value> n = this.find(this.root, key, val);
+        return n;
+    }
+
+    public void insert(Key key, Value val) {
+        BinarySearchTreeNode<Key,Value> n
+            = new BinarySearchTreeNode<Key,Value>(key, val);
+
+        this.root = this.insert(this.root, n);
     }
 
     public Key successor(Key key) {

@@ -22,33 +22,36 @@ public class Status {
      */
     public void insert(LineSegment ls) {
 
-        // 1. Insert as first entry if bst is empty.
         if (this.bst.empty()) {
+
+            // Insert as first entry if bst is empty.
             this.bst.insert(new ComparableInteger(0), ls);
+
+        } else {
+
+            // 1. Identify the key before that to be adopted by the
+            //    new LineSegment.
+
+            final RetrieveInsertionKeyVisitor rv = new RetrieveInsertionKeyVisitor(ls.start);
+            this.bst.visit(rv);
+
+            ComparableInteger ik = rv.getInsertionKey();
+            if (ik == null) {
+                // The new LineSegment should be inserted at the beginning of the
+                // Status if it has the smallest x - ordinate value at ls.start.y.
+                ik = new ComparableInteger(0);
+            }
+
+            // 2. Traverse the bst and increase the keys > the identified key
+            //    by +1 to make space for the insertion and preserve the index
+            //    values of the bst nodes represented by the keys.
+            final IncrementKeyVisitor iv = new IncrementKeyVisitor(ik);
+            this.bst.visit(iv);
+
+            // 3. Insert a new Node into the bst with the retrieved insertionKey
+            //    containing the new LineSegment.
+            this.bst.insert(ik, ls);
         }
-
-        // 2. Identify the key before that to be adopted by the
-        //    new LineSegment.
-
-        final RetrieveInsertionKeyVisitor rv = new RetrieveInsertionKeyVisitor(ls.start);
-        this.bst.visit(rv);
-
-        ComparableInteger ik = rv.getInsertionKey();
-        if (ik == null) {
-            // The new LineSegment should be inserted at the beginning of the
-            // Status if it has the smallest x - ordinate value at ls.start.y.
-            ik = new ComparableInteger(0);
-        }
-
-        // 3. Traverse the bst and increase the keys > the identified key
-        //    by +1 to make space for the insertion and preserve the index
-        //    values of the bst nodes represented by the keys.
-        final IncrementKeyVisitor iv = new IncrementKeyVisitor(ik);
-        this.bst.visit(iv);
-
-        // 4. Insert a new Node into the bst with the retrieved insertionKey
-        //    containing the new LineSegment.
-        this.bst.insert(new ComparableInteger(ik.i), ls);
     }
 
     public void remove(LineSegment ls) {

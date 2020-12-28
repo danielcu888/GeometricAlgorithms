@@ -645,4 +645,9 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
         this.serialiseAll(sb, this.root);
         return sb.toString();
     }
+
+    @Override
+    public String toString() {
+        return this.serialiseAll();
+    }
 }

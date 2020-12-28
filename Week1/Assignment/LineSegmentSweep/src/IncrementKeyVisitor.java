@@ -32,13 +32,8 @@ public class IncrementKeyVisitor implements BinarySearchTreeVisitor<ComparableIn
         if (node != null) {
             this.updateKey(node.key);
 
-            if (node.left != null) {
-                this.visit(node.left);
-            }
-
-            if (node.right != null) {
-                this.visit(node.right);
-            }
+            this.visit(node.left);
+            this.visit(node.right);
         }
     }
 

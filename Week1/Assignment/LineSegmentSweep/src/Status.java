@@ -40,23 +40,25 @@ public class Status {
             final RetrieveInsertionKeyVisitor rv = new RetrieveInsertionKeyVisitor(ls.start);
             this.bst.visit(rv);
 
-            ComparableInteger ik = rv.getInsertionKey();
-            if (ik == null) {
+            int ik = -1;
+            if (rv.getInsertionKey() == null) {
                 // The new LineSegment should be inserted at the beginning of the
                 // Status if it has the smallest x - ordinate value at ls.start.y.
-                ik = new ComparableInteger(0);
+                ik = 0;
+            } else {
+                ik = rv.getInsertionKey().i;
             }
 
             // 2. Traverse the bst and increase the keys >= the identified key
             //    by +1 to make space for the insertion and preserve the index
             //    values of the bst nodes represented by the keys.
             final IncrementKeyVisitor iv
-                = new IncrementKeyVisitor(new ComparableInteger(ik.i));
+                = new IncrementKeyVisitor(new ComparableInteger(ik));
             this.bst.visit(iv);
 
             // 3. Insert a new Node into the bst with the retrieved insertionKey
             //    containing the new LineSegment.
-            this.bst.insert(iv.getReferenceKey(), ls);
+            this.bst.insert(new ComparableInteger(ik), ls);
         }
     }
 

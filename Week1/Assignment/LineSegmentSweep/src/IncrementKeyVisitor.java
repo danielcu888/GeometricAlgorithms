@@ -1,9 +1,8 @@
 /**
  *
- * A BinarySearchTreeVisitor to increment the value if all the (ComaparableInteger)
- * keys of the nodes in a specified BinarySearchTree that possess values greater
- * than the value of the reference key specified on construction.
- *
+ * A BinarySearchTreeVisitor to increment all keys in a specified
+ * BinarySearchTree<ComparableInteger, LineSegment> greater than
+ * a specified reference value.
  */
 public class IncrementKeyVisitor implements BinarySearchTreeVisitor<ComparableInteger, LineSegment> {
 

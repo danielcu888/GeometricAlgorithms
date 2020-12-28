@@ -33,4 +33,9 @@ public class ComparableInteger implements Comparable<ComparableInteger> {
     public ComparableInteger(Integer i_) {
         this.i = i_;
     }
+
+    @Override
+    public String toString() {
+        return new Integer(this.i).toString();
+    }
 }

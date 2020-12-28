@@ -86,6 +86,9 @@ public class LineSegment {
      * @param x The specified x-ordinate.
      * @return The y-ordinate of the Coordinate of the
      *   specified x-ordinate that is coi with this LineSegment.
+     *   If this LineSegment is vertical, and x is that
+     *   of this LineSegment, then the minimum
+     *   y-coordinate of this LineSegment will be returned.
      * @return null If x is out of range of the x-extent
      *    of this LineSegment.
      * @return start.y for a vertical LineSegment coi with x.
@@ -97,7 +100,7 @@ public class LineSegment {
         }
 
         if (this.isVertical && (this.start.x == x)) {
-            return this.start.y;
+            return this.miny;
         }
 
         return (this.gradient * x) + this.intercept;
@@ -109,6 +112,9 @@ public class LineSegment {
      * @param y The specified x-ordinate.
      * @return The x-ordinate of the Coordinate of the
      *   specified y-ordinate that is coi with this LineSegment.
+     *   If this LineSegment is horizontal, and y is equal
+     *   to that of the LineSegment, then the minimum
+     *   x-coordinate of this LineSegment will be returned.
      * @return null If y is out of range of the y-extent
      *    of this LineSegment.
      */
@@ -119,7 +125,7 @@ public class LineSegment {
         }
 
         if (this.isHorizontal && (this.start.y == y)) {
-            return this.start.x;
+            return this.minx;
         }
 
         return (y - this.intercept) / this.gradient;

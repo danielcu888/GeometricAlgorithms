@@ -147,6 +147,14 @@ class LineSegmentTest {
     }
 
     @Test
+    void testY5() {
+        final Coordinate s = new Coordinate(0.0, 0.0);
+        final Coordinate e = new Coordinate(0.0, 10.0);
+        final LineSegment ls = new LineSegment(0,e,s);
+        assertEquals(0,ls.y(0));
+    }
+
+    @Test
     void testX() {
         final Coordinate s = new Coordinate(0.0, 0.0);
         final Coordinate e = new Coordinate(10.0, 10.0);
@@ -178,6 +186,14 @@ class LineSegmentTest {
         assertEquals(null,ls.x(1));
     }
 
+    @Test
+    void testX5() {
+        final Coordinate s = new Coordinate(0.0, 0.0);
+        final Coordinate e = new Coordinate(10.0, 0.0);
+        final LineSegment ls = new LineSegment(0,e,s);
+        assertEquals(0,ls.x(0));
+    }
+    
     @Test
     void testGradient() {
         final Coordinate s = new Coordinate(0.0, 0.0);

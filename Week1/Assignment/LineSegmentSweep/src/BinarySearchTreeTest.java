@@ -473,4 +473,30 @@ class BinarySearchTreeTest {
 
         Assertions.assertTrue(bst.empty());
     }
+
+    @Test
+    void TestSize1() {
+        final BinarySearchTree<Integer,Integer> bst
+                = new BinarySearchTree<Integer,Integer>();
+
+        Assertions.assertEquals(0, bst.size());
+    }
+
+    @Test
+    void TestSize2() {
+        final BinarySearchTree<Integer,Integer> bst
+            = new BinarySearchTree<Integer,Integer>();
+
+        bst.insert(5,5);
+        bst.insert(2,2);
+        bst.insert(7,7);
+        bst.insert(1,1);
+        bst.insert(3,3);
+        bst.insert(6,6);
+        bst.insert(9,9);
+        bst.insert(4,4);
+        bst.insert(10,10);
+
+        Assertions.assertEquals(9, bst.size());
+    }
 }

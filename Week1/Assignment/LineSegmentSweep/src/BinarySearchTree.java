@@ -15,6 +15,24 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
     // Private methods
 
     /**
+     * Returns the number of nodes in the specified BinarySearchTree.
+     * @param n The root of the BinarySearchTree to be counted.
+     * @param count The count carried forward.
+     * @return The number of nodes in the specified BinarySearchTree.
+     */
+    private int size(BinarySearchTreeNode<Key,Value> n, int count) {
+        if (n == null) {
+                return count;
+        }
+
+        ++count;
+        count = this.size(n.left, count);
+        count = this.size(n.right, count);
+
+        return count;
+    }
+
+    /**
      * Find the minimum of the specified BST.
      * @param root The root node of the BST to be searched.
      * @return The node of the specified BST with the
@@ -550,6 +568,14 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
      */
     public boolean empty() {
         return this.root == null;
+    }
+
+    /**
+     * Returns the number of nodes in this BinarySearchTree.
+     * @return The number of nodes in this BinarySearchTree.
+     */
+    public int size() {
+        return this.size(this.root, 0);
     }
 
     /**

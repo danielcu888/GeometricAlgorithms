@@ -1,4 +1,3 @@
-
 public class LineSegment {
 
     public Integer id = -1;
@@ -342,7 +341,7 @@ public class LineSegment {
 
             if ((x_inx >= ls1.minx) && (x_inx <= ls1.maxx) &&
                 (x_inx >= ls2.minx) && (x_inx <= ls2.maxx)
-                ) {
+               ) {
 
                 // Point intersection.
 
@@ -360,5 +359,15 @@ public class LineSegment {
         }
 
         return ret;
+    }
+
+    @Override
+    public String toString() {
+        return "L[" +
+                        this.id + "," +
+                        this.start.toString() +
+                        "," +
+                        this.end.toString() +
+                        "]";
     }
 }

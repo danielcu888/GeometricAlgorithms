@@ -9,7 +9,7 @@ public class RetrieveInsertionKeyVisitor implements BinarySearchTreeVisitor<Comp
     /**
      * A Coordinate to be used for comparison.
      */
-    private Coordinate c;
+    private final Coordinate c;
 
     /**
      * The node key to be retrieved.
@@ -43,6 +43,14 @@ public class RetrieveInsertionKeyVisitor implements BinarySearchTreeVisitor<Comp
                 if ((this.insertionKey == null) || (this.insertionKey.compareTo(node.key) < 1)){
                     this.insertionKey = node.key;
                 }
+            }
+
+            if (node.left != null) {
+                this.visit(node.left);
+            }
+
+            if (node.right != null) {
+                this.visit(node.right);
             }
         }
     }

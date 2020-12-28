@@ -19,8 +19,13 @@ public class Status {
     /**
      * Insert a new LineSegment into this Status object.
      * @param ls The LineSegment to be inserted.
+     * @throws IllegalArgumentException
      */
     public void insert(LineSegment ls) {
+
+        if (ls == null) {
+            throw new IllegalArgumentException("Attempt to insert null LineSegment.");
+        }
 
         if (this.bst.empty()) {
 
@@ -42,15 +47,16 @@ public class Status {
                 ik = new ComparableInteger(0);
             }
 
-            // 2. Traverse the bst and increase the keys > the identified key
+            // 2. Traverse the bst and increase the keys >= the identified key
             //    by +1 to make space for the insertion and preserve the index
             //    values of the bst nodes represented by the keys.
-            final IncrementKeyVisitor iv = new IncrementKeyVisitor(ik);
+            final IncrementKeyVisitor iv
+                = new IncrementKeyVisitor(new ComparableInteger(ik.i));
             this.bst.visit(iv);
 
             // 3. Insert a new Node into the bst with the retrieved insertionKey
             //    containing the new LineSegment.
-            this.bst.insert(ik, ls);
+            this.bst.insert(iv.getReferenceKey(), ls);
         }
     }
 
@@ -167,5 +173,22 @@ public class Status {
         final LineSegment ls = n1.value;
         n1.value = n2.value;
         n2.value = ls;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer();
+
+        sb.append("Status{");
+
+        if (this.bst.empty()) {
+            sb.append("EMPTY");
+        } else {
+            sb.append(this.bst.toString());
+        }
+
+        sb.append("}");
+
+        return sb.toString();
     }
 }

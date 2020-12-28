@@ -17,7 +17,7 @@ public class IncrementKeyVisitor implements BinarySearchTreeVisitor<ComparableIn
      * @param key The key to be compared.
      */
     private void updateKey(ComparableInteger key) {
-        if (key.compareTo(referenceKey) > 0) {
+        if (key.compareTo(referenceKey) >= 0) {
             ++key.i;
         }
     }
@@ -42,6 +42,14 @@ public class IncrementKeyVisitor implements BinarySearchTreeVisitor<ComparableIn
      * @param referenceKey_ The key to use for the comparison predicate.
      */
     public IncrementKeyVisitor(ComparableInteger referenceKey_) {
-        this.referenceKey = referenceKey_;
+        this.referenceKey = new ComparableInteger(referenceKey_.i);
+    }
+
+    /**
+     * Retrieve reference key.
+     * @return The reference key of this object.
+     */
+    public ComparableInteger getReferenceKey() {
+        return this.referenceKey;
     }
 }

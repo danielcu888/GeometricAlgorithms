@@ -122,7 +122,7 @@ public class Status {
      */
     public BinarySearchTreeNode<ComparableInteger, LineSegment> successor(LineSegment ls) {
 
-        // Retrieve node with value ls
+        // Retrieve node with value ls.
         final RetrieveNodeByValueVisitor v = new RetrieveNodeByValueVisitor(ls);
         this.bst.visit(v);
         final BinarySearchTreeNode<ComparableInteger, LineSegment> node = v.getNode();

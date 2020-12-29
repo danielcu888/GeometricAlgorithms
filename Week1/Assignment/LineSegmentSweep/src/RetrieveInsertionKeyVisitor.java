@@ -36,12 +36,13 @@ public class RetrieveInsertionKeyVisitor implements BinarySearchTreeVisitor<Comp
             // 2. Compare c.x with x from (1).
             if (x <= c.x) {
 
-                // Therefore the current LineSegment should be inserted after the
+                // Therefore the target LineSegment should be inserted after the
                 // LineSegment of the current Node.
+                final ComparableInteger candidateInsertionKey = new ComparableInteger(node.key.i+1);
 
-                // Choose the largest of node.key and insertionKey.
-                if ((this.insertionKey == null) || (this.insertionKey.compareTo(node.key) < 1)){
-                    this.insertionKey = node.key;
+                // Choose the largest of candidateInsertionKey and insertionKey.
+                if ((this.insertionKey == null) || (candidateInsertionKey.compareTo(this.insertionKey) == 1)) {
+                    this.insertionKey = candidateInsertionKey;
                 }
             }
 

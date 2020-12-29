@@ -68,6 +68,10 @@ public class Status {
      */
     public void remove(LineSegment ls) {
 
+        if (this.empty()) {
+            throw new IllegalStateException("Attempt to remove ls from empty Status.");
+        }
+
         // Find the node associated with the specified LineSegment.
         final RetrieveNodeByValueVisitor v = new RetrieveNodeByValueVisitor(ls);
         this.bst.visit(v);
@@ -177,13 +181,21 @@ public class Status {
         n2.value = ls;
     }
 
+    /**
+     * Returns if this Status is empty.
+     * @return If this Status is empty.
+     */
+    public boolean empty() {
+        return this.bst.empty();
+    }
+
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer();
 
         sb.append("Status{");
 
-        if (this.bst.empty()) {
+        if (this.empty()) {
             sb.append("EMPTY");
         } else {
             sb.append(this.bst.toString());

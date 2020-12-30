@@ -54,7 +54,7 @@ class EventQueueTest {
         final Event start2 = new Event(EventType.START,s2,ls2);
         final Event end2 = new Event(EventType.END,e2,ls2);
 
-        final Event inx12 = new Event(EventType.INTERSECTION,inx,ls1,ls2);
+        final Event inx12 = new Event(EventType.POINT_INTERSECTION,inx,ls1,ls2);
 
         // Add events to queue in random order.
         q.enqueue(end2);
@@ -88,7 +88,7 @@ class EventQueueTest {
         assertEquals(inx, ev3.coord);
         assertEquals(ls1, ev3.ls1);
         assertEquals(ls2, ev3.ls2);
-        assertEquals(EventType.INTERSECTION, ev3.type);
+        assertEquals(EventType.POINT_INTERSECTION, ev3.type);
 
         // End of first LineSegment
         assertFalse(q.empty());
@@ -153,7 +153,7 @@ class EventQueueTest {
 
         final Event ev1 = new Event(EventType.START,s1,ls1);
         final Event ev2 = new Event(EventType.END,e1,ls1);
-        final Event ev3 = new Event(EventType.INTERSECTION,inx,ls1,ls2);
+        final Event ev3 = new Event(EventType.POINT_INTERSECTION,inx,ls1,ls2);
         final Event ev4 = new Event(EventType.START,s2,ls2);
         final Event ev5 = new Event(EventType.END,e2,ls2);
 
@@ -198,7 +198,7 @@ class EventQueueTest {
         assertEquals(inx, aev3.coord);
         assertEquals(ls1, aev3.ls1);
         assertEquals(ls2, aev3.ls2);
-        assertEquals(EventType.INTERSECTION, aev3.type);
+        assertEquals(EventType.POINT_INTERSECTION, aev3.type);
 
         // End of second LineSegment
         assertFalse(q.empty());
@@ -226,7 +226,7 @@ class EventQueueTest {
 
         final Event ev1 = new Event(EventType.START,s1,ls1);
         final Event ev2 = new Event(EventType.END,e1,ls1);
-        final Event ev3 = new Event(EventType.INTERSECTION,inx,ls1,ls2);
+        final Event ev3 = new Event(EventType.POINT_INTERSECTION,inx,ls1,ls2);
         final Event ev4 = new Event(EventType.START,s2,ls2);
         final Event ev5 = new Event(EventType.END,e2,ls2);
 
@@ -262,7 +262,7 @@ class EventQueueTest {
         assertEquals(inx, aev3.coord);
         assertEquals(ls1, aev3.ls1);
         assertEquals(ls2, aev3.ls2);
-        assertEquals(EventType.INTERSECTION, aev3.type);
+        assertEquals(EventType.POINT_INTERSECTION, aev3.type);
 
         // Start of second LineSegment
         assertFalse(q.empty());

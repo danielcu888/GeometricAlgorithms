@@ -50,4 +50,9 @@ public class EventQueue {
     public boolean empty() {
         return this.bst.empty();
     }
+
+    @Override
+    public String toString() {
+        return "EventQueue<" + this.bst.toString() + ">";
+    }
 }

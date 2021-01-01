@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class FindIntersections {
 
     private static boolean ENABLE_DEBUGGING = false;
+    private static boolean PRINT_RESULTS = true;
 
     // Private data members
     private ArrayList<Event> inx;
@@ -390,6 +391,22 @@ public class FindIntersections {
                 } else if ((e.ls1 == referenceEvent.ls1) && (e.ls2 == referenceEvent.ls2)) {
                     // There can only be 1 intersection Event involving the same 2 LineSegments - remove duplicate.
                     this.inx.remove(e);
+                }
+            }
+
+            if (FindIntersections.PRINT_RESULTS) {
+                if (this.inx.isEmpty()) {
+                    System.out.println("\n======= No Intersections Found ========");
+                } else {
+                    System.out.println( "\n======= "
+                            + this.inx.size()
+                            + " Intersection(s) Found ========="
+                          );
+                    int count = 1;
+                    for (Event e : this.inx) {
+                            System.out.println(count++ + ": " + e);
+                    }
+                    System.out.println("=========================================");
                 }
             }
         }

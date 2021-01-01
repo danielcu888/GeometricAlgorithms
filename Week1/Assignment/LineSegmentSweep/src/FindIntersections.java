@@ -2,6 +2,8 @@ import java.util.ArrayList;
 
 public class FindIntersections {
 
+    private static boolean ENABLE_DEBUGGING = false;
+
     // Private data members
     private ArrayList<Event> inx;
 
@@ -41,15 +43,22 @@ public class FindIntersections {
             succ_inx = LineSegment.intersection(e.ls1, succ.value);
         }
 
-        // 4. If any intersections are found, enqueue them as Events.
+        // 4. If any intersections are found, enqueue them as Events, with the
+        //    LineSegment with the smaller key being marked as ls1. (They must be
+        //    at y >= to that of the current event since the current event is
+        //    associated with the start of one of the intersecting lines).
 
         if (pred_inx != null) {
+
+            final LineSegment ls1 = (e.ls1.id < pred.value.id) ? e.ls1 : pred.value;
+            final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : pred.value;
+
             switch (pred_inx.dim) {
             case POINT:
-                q.enqueue(new Event(EventType.POINT_INTERSECTION, pred_inx.coord, e.ls1, pred.value));
+                q.enqueue(new Event(EventType.POINT_INTERSECTION, pred_inx.coord, ls1, ls2));
                 break;
             case LINE:
-                q.enqueue(new Event(EventType.LINE_INTERSECTION, pred_inx.coord, e.ls1, pred.value));
+                q.enqueue(new Event(EventType.LINE_INTERSECTION, pred_inx.coord, ls1, ls2));
                 break;
             case UNKNOWN:
                 throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
@@ -59,12 +68,16 @@ public class FindIntersections {
         }
 
         if (succ_inx != null) {
+
+            final LineSegment ls1 = (e.ls1.id < succ.value.id) ? e.ls1 : succ.value;
+            final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : succ.value;
+
             switch (succ_inx.dim) {
             case POINT:
-                q.enqueue(new Event(EventType.POINT_INTERSECTION, succ_inx.coord, e.ls1, succ.value));
+                q.enqueue(new Event(EventType.POINT_INTERSECTION, succ_inx.coord, ls1, ls2));
                 break;
             case LINE:
-                q.enqueue(new Event(EventType.LINE_INTERSECTION, succ_inx.coord, e.ls1, succ.value));
+                q.enqueue(new Event(EventType.LINE_INTERSECTION, succ_inx.coord, ls1, ls2));
                 break;
             case UNKNOWN:
                 throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
@@ -102,19 +115,29 @@ public class FindIntersections {
         }
 
         // 4. If an intersection is found then add it as an Event to the
-        //    EventQueue.
+        //    EventQueue, with the LineSegment with the smaller key being
+        //    marked as ls1.
+        //    We ignore intersections at y values < that of the current end
+        //    event since we must have processed them before.
+
         if (inx != null) {
-            switch (inx.dim) {
-            case POINT:
-                q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, pred.value, succ.value));
-                break;
-            case LINE:
-                q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, pred.value, succ.value));
-                break;
-            case UNKNOWN:
-                throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
-            default:
-                throw new IllegalStateException("Unrecognised InxDim");
+            if (inx.coord.y >= e.coord.y) {
+
+                final LineSegment ls1 = (pred.value.id < succ.value.id) ? pred.value : succ.value;
+                final LineSegment ls2 = (ls1 != pred.value) ? pred.value : succ.value;
+
+                switch (inx.dim) {
+                case POINT:
+                    q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                    break;
+                case LINE:
+                    q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2));
+                    break;
+                case UNKNOWN:
+                    throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
+                default:
+                    throw new IllegalStateException("Unrecognised InxDim");
+                }
             }
         }
     }
@@ -139,96 +162,126 @@ public class FindIntersections {
         //    new Status neighbours intersect with them, and, if so, enqueue
         //    the intersections as Events to the EventQueue, with ls1 of that
         //    Event being the LineSegment with the smaller id.
+        //    We skip processing predecessors or successors that are just
+        //    one of the two LineSegments of the current event, since there can
+        //    be only one intersection between any pair and we have just
+        //    processed it.
+        //    We also skip processing intersections at y smaller than that of the
+        //    current Event.
 
         final BinarySearchTreeNode<ComparableInteger, LineSegment> pred1
             = s.predecessor(e.ls1);
 
-        if (pred1 != null) {
+        if ((pred1 != null) && (pred1.value != e.ls2)) {
+
             final InxData inx = LineSegment.intersection(e.ls1, pred1.value);
 
-            final LineSegment ls1 = (e.ls1.id < pred1.value.id) ? e.ls1 : pred1.value;
-            final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : pred1.value;
+            if (inx != null) {
+                if (inx.coord.y >= e.coord.y) {
 
-            switch (inx.dim) {
-            case POINT:
-                q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
-                break;
-            case LINE:
-                q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2));
-                break;
-            case UNKNOWN:
-                throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
-            default:
-                throw new IllegalStateException("Unrecognised InxDim");
+                    final LineSegment ls1 = (e.ls1.id < pred1.value.id) ? e.ls1 : pred1.value;
+                    final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : pred1.value;
+
+                    switch (inx.dim) {
+                    case POINT:
+                        q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                        break;
+                    case LINE:
+                        q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2));
+                        break;
+                    case UNKNOWN:
+                        throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
+                    default:
+                        throw new IllegalStateException("Unrecognised InxDim");
+                    }
+                }
             }
         }
 
         final BinarySearchTreeNode<ComparableInteger, LineSegment> suc1
             = s.successor(e.ls1);
 
-        if (suc1 != null) {
+        if ((suc1 != null) && (suc1.value != e.ls1)) {
+
             final InxData inx = LineSegment.intersection(e.ls1, suc1.value);
 
-            final LineSegment ls1 = (e.ls1.id < suc1.value.id) ? e.ls1 : suc1.value;
-            final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : suc1.value;
+            if (inx != null) {
+                if (inx.coord.y >= e.coord.y) {
 
-            switch (inx.dim) {
-            case POINT:
-                q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
-                break;
-            case LINE:
-                q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2));
-                break;
-            case UNKNOWN:
-                throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
-            default:
-                throw new IllegalStateException("Unrecognised InxDim");
+                    final LineSegment ls1 = (e.ls1.id < suc1.value.id) ? e.ls1 : suc1.value;
+                    final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : suc1.value;
+
+                    switch (inx.dim) {
+                    case POINT:
+                        q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                        break;
+                    case LINE:
+                        q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2));
+                        break;
+                    case UNKNOWN:
+                        throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
+                    default:
+                        throw new IllegalStateException("Unrecognised InxDim");
+                    }
+                }
             }
         }
 
         final BinarySearchTreeNode<ComparableInteger, LineSegment> pred2
             = s.predecessor(e.ls2);
 
-        if (pred2 != null) {
+        if ((pred2 != null) && (pred2.value != e.ls1)) {
+
             final InxData inx = LineSegment.intersection(e.ls2, pred2.value);
 
-            final LineSegment ls1 = (e.ls2.id < pred2.value.id) ? e.ls2 : pred2.value;
-            final LineSegment ls2 = (ls1 != e.ls2) ? e.ls2 : pred2.value;
+            if (inx != null) {
+                if (inx.coord.y >= e.coord.y) {
 
-            switch (inx.dim) {
-            case POINT:
-                q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
-                break;
-            case LINE:
-                q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2));
-                break;
-            case UNKNOWN:
-                throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
-            default:
-                throw new IllegalStateException("Unrecognised InxDim");
+                    final LineSegment ls1 = (e.ls2.id < pred2.value.id) ? e.ls2 : pred2.value;
+                    final LineSegment ls2 = (ls1 != e.ls2) ? e.ls2 : pred2.value;
+
+                    switch (inx.dim) {
+                    case POINT:
+                        q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                        break;
+                    case LINE:
+                        q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2));
+                        break;
+                    case UNKNOWN:
+                        throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
+                    default:
+                        throw new IllegalStateException("Unrecognised InxDim");
+                    }
+                }
             }
         }
 
         final BinarySearchTreeNode<ComparableInteger, LineSegment> suc2
             = s.successor(e.ls2);
 
-        if (suc2 != null) {
+        if ((suc2 != null) && (suc2.value != e.ls1)) {
+
             final InxData inx = LineSegment.intersection(e.ls2, suc2.value);
 
-            final LineSegment ls1 = (e.ls2.id < suc2.value.id) ? e.ls2 : suc2.value;
-            final LineSegment ls2 = (ls1 != e.ls2) ? e.ls2 : suc2.value;
+            if (inx != null) {
+                if (inx.coord.y >= e.coord.y) {
 
-            switch (inx.dim) {
-            case POINT:
-                q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
-                break;
-            case LINE:
-                q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
-                break;
-            case UNKNOWN:
-                throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
-            default:
-                throw new IllegalStateException("Unrecognised InxDim");
+                    final LineSegment ls1 = (e.ls2.id < suc2.value.id) ? e.ls2 : suc2.value;
+                    final LineSegment ls2 = (ls1 != e.ls2) ? e.ls2 : suc2.value;
+
+                    switch (inx.dim) {
+                    case POINT:
+                        q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                        break;
+                    case LINE:
+                        q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                        break;
+                    case UNKNOWN:
+                        throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
+                    default:
+                        throw new IllegalStateException("Unrecognised InxDim");
+                    }
+                }
             }
         }
     }
@@ -243,6 +296,10 @@ public class FindIntersections {
      */
     FindIntersections(ArrayList<LineSegment> segments) {
 
+        if (segments == null) {
+            throw new IllegalArgumentException();
+        }
+
         // Construct empty list to store the Events of the sweep.
         this.inx = new ArrayList<Event>();
 
@@ -256,17 +313,25 @@ public class FindIntersections {
                 throw new IllegalArgumentException("null LineSegment.");
             }
 
-            // Clone and reverse any LineSegment that has dy/dx <= 0.
-
-            final double grad = ls.gradient();
-            if ((grad == Double.NEGATIVE_INFINITY) || grad < 0) {
+            // Clone and reverse any LineSegment that has start.y > end.y.
+            if (ls.start.y > ls.end.y) {
                 // Clone and reverse.
                 ls = new LineSegment(ls.id,ls.end,ls.start);
             }
 
             // Add the endpoint events for the current LineSegment.
+
             q.enqueue(new Event(EventType.START, ls.start, ls));
+
+            if (FindIntersections.ENABLE_DEBUGGING) {
+                System.out.println(q.toString());
+            }
+
             q.enqueue(new Event(EventType.END, ls.end, ls));
+
+            if (FindIntersections.ENABLE_DEBUGGING) {
+                System.out.println(q.toString());
+            }
         }
 
         // Construct empty Status.
@@ -277,6 +342,11 @@ public class FindIntersections {
 
             // Retrieve next Event.
             final Event e = q.dequeue();
+
+            if (FindIntersections.ENABLE_DEBUGGING) {
+                System.out.println("Processing event: " + e.toString() + "...");
+                System.out.println(q.toString());
+            }
 
             // Switch on type of current Event.
             final EventType et = e.type;

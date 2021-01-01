@@ -72,13 +72,24 @@ public class Status {
             throw new IllegalStateException("Attempt to remove ls from empty Status.");
         }
 
-        // Find the node associated with the specified LineSegment.
+        // 1. Find the node associated with the specified LineSegment.
         final RetrieveNodeByValueVisitor v = new RetrieveNodeByValueVisitor(ls);
         this.bst.visit(v);
         final BinarySearchTreeNode<ComparableInteger, LineSegment> node = v.getNode();
 
-        // Remove the retrieved node.
+        if (node == null) {
+            throw new IllegalStateException("Could not find Status node that needs to be removed.");
+        }
+
+        // 2. Retrieve the key of the node to be removed.
+        final int rk = node.key.i;
+
+        // 3. Remove the retrieved node.
         this.bst.remove(node);
+
+        // 4. Decrement (by -1) the values of the keys of all Status nodes that are > rk.
+        final DecrementKeyVisitor dv = new DecrementKeyVisitor(new ComparableInteger(rk));
+        this.bst.visit(dv);
     }
 
     /**

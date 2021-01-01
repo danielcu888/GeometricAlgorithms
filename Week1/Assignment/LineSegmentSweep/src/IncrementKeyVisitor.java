@@ -1,7 +1,6 @@
 /**
- *
  * A BinarySearchTreeVisitor to increment all keys in a specified
- * BinarySearchTree<ComparableInteger, LineSegment> greater than
+ * BinarySearchTree<ComparableInteger, LineSegment> >= than
  * a specified reference value.
  */
 public class IncrementKeyVisitor implements BinarySearchTreeVisitor<ComparableInteger, LineSegment> {
@@ -12,7 +11,7 @@ public class IncrementKeyVisitor implements BinarySearchTreeVisitor<ComparableIn
     private ComparableInteger referenceKey;
 
     /**
-     * Update the specified key if greater than the value
+     * Update the specified key if >= than the value
      * of referenceKey.
      * @param key The key to be compared.
      */

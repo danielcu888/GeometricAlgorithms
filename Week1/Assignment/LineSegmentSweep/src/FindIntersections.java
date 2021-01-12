@@ -3,11 +3,13 @@ import java.util.Collections;
 
 public class FindIntersections {
 
-    private static boolean ENABLE_DEBUGGING = true;
-    private static boolean PRINT_RESULTS = true;
-
     // Private data members
-    private ArrayList<Event> inx;
+
+    private static boolean ENABLE_DEBUGGING = false;
+    private static boolean PRINT_RESULTS = true;
+    private ArrayList<Event> inx = null;
+    private int totalNumberOfEvents = 0;
+    private ArrayList<Event> events = null;
 
     // Private methods
 
@@ -302,8 +304,11 @@ public class FindIntersections {
             throw new IllegalArgumentException();
         }
 
-        // Construct empty list to store the Events of the sweep.
+        // Construct empty list to store the intersection Events of the sweep.
         this.inx = new ArrayList<Event>();
+
+        // Construct empty list to store the Events of the sweep.
+        this.events = new ArrayList<Event>();
 
         // Construct empty EventQueue to manage the Events.
         final EventQueue q = new EventQueue();
@@ -323,18 +328,24 @@ public class FindIntersections {
 
             // Add the endpoint events for the current LineSegment.
 
-            q.enqueue(new Event(EventType.START, ls.start, ls));
+            final Event s = new Event(EventType.START, ls.start, ls);
+            q.enqueue(s);
+            this.events.add(s);
 
             if (FindIntersections.ENABLE_DEBUGGING) {
                 System.out.println(q.toString());
             }
 
-            q.enqueue(new Event(EventType.END, ls.end, ls));
+            final Event e = new Event(EventType.END, ls.end, ls);
+            q.enqueue(e);
+            this.events.add(e);
 
             if (FindIntersections.ENABLE_DEBUGGING) {
                 System.out.println(q.toString());
             }
         }
+
+        this.totalNumberOfEvents = segments.size() * 2;
 
         // Construct empty Status.
         final Status s = new Status();
@@ -372,7 +383,7 @@ public class FindIntersections {
         if (!this.inx.isEmpty()) {
             // Remove duplicate intersection Events.
 
-                ArrayList<Event> filtered_inx = new ArrayList<Event>();
+            ArrayList<Event> filtered_inx = new ArrayList<Event>();
 
             // 1. sort the intersection events in descending y-value.
             this.inx.sort(new IntersectionEventComparator());
@@ -390,41 +401,68 @@ public class FindIntersections {
                 }
 
                 if (referenceEvent == null) {
-                        // Add the reference Event to the filtered Event set.
-                        filtered_inx.add(e);
+                    // Add the reference Event to the filtered Event set
+                        // and the total Event set.
+                    filtered_inx.add(e);
+                    this.events.add(e);
 
                     // Set new reference Event.
-                        referenceEvent = e;
+                    referenceEvent = e;
                 } else if ((e.coord.y < referenceEvent.coord.y) ||
-                                                   (e.ls1 != referenceEvent.ls1) ||
-                                                   (e.ls2 != referenceEvent.ls2)) {
-                                        // Event e occurs at different y to reference Event or
-                                        // is a non-duplicate Event at the same y.
+                           (e.ls1 != referenceEvent.ls1) ||
+                           (e.ls2 != referenceEvent.ls2)) {
+                    // Event e occurs at different y to reference Event or
+                    // is a non-duplicate Event at the same y.
 
-                                        // Set new reference Event.
-                                        referenceEvent = e;
+                    // Set new reference Event.
+                    referenceEvent = e;
 
-                                        // Add the reference Event to the filtered Event set.
-                                        filtered_inx.add(referenceEvent);
+                    // Add the reference Event to the filtered Event set
+                        // and the total Event set.
+                    filtered_inx.add(referenceEvent);
+                    this.events.add(e);
                 }
             }
 
             this.inx = filtered_inx;
 
+            // Sort total Events list in descending order of y values.
+            this.events.sort(new IntersectionEventComparator());
+            Collections.reverse(this.events);
+
             if (FindIntersections.PRINT_RESULTS) {
+
+                // Print intersection Event summary.
+                System.out.println("\n******* Intersections - START ***********");
                 if (this.inx.isEmpty()) {
-                    System.out.println("\n======= No Intersections Found ========");
+                        System.out.println("\n======= No Intersections Found ========");
                 } else {
-                    System.out.println( "\n======= "
-                            + this.inx.size()
-                            + " Intersection(s) Found ========="
-                          );
+                    System.out.println( "======= "
+                                        + this.inx.size()
+                                        + " Intersection(s) Found: ========"
+                                      );
                     int count = 1;
                     for (Event e : this.inx) {
-                            System.out.println(count++ + ": " + e);
+                        System.out.println(count++ + ": " + e);
                     }
-                    System.out.println("=========================================");
                 }
+                System.out.println("******* Intersections - END *************");
+
+                // Print total Event summary.
+                System.out.println("\n******* All Events - START **************");
+                if (this.events.isEmpty()) {
+                        System.out.println("======= No Events Found ==============");
+                } else {
+                        System.out.println( "======= "
+                                            + this.events.size()
+                                            + " Events(s) Found: =============="
+                                          );
+                        int count = 1;
+                        for (Event e : this.events) {
+                            System.out.println(count++ + ": " + e);
+                        }
+                }
+                System.out.println("******* All Events - END ****************");
             }
         }
     }
@@ -433,12 +471,25 @@ public class FindIntersections {
 
     /**
      * Return a collection of the intersection events associated with the
-     * LineSegments associated with this FindIntersections object.
+     * LineSegments associated with this FindIntersections object in order
+     * of descending y-value (then descending x-value).
      * @return Return a collection of the intersection events associated
      *   with the LineSegments associated with this FindIntersections
-     *   object.
+     *   object in order of descending y-value (then descending x-value).
      */
     public ArrayList<Event> intersections() {
         return this.inx;
+    }
+
+    /**
+     * Return a collection of the events associated with the LineSegments
+     * associated with this FindIntersections object in order of descending
+     * y-value (then descending x-value).
+     * @return Return a collection of the events associated with the
+     * LineSegments associated with this FindIntersections object in order
+     * of descending y-value (then descending x-value).
+     */
+    public ArrayList<Event> events() {
+        return this.events;
     }
 }

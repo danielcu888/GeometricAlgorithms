@@ -1,6 +1,6 @@
 /**
  * A class to encapsulate and manage a queue of Events, keyed
- * on the y-coordinate of each Event (in ascending order). Two
+ * on the y-coordinate of each Event (in descending order). Two
  * Events with the same y-coordinate will be ordered in ascending
  * order of their respective x-coordinate values. Events with
  * coincident Coordinates will be ordered based upon implementation
@@ -36,9 +36,9 @@ public class EventQueue {
             throw new IllegalStateException("dequeue - Cannot pop empty EventQueue.");
         }
 
-        final Coordinate min = this.bst.minimum();
-        final Event minVal = this.bst.find(min);
-        this.bst.remove(min,null);
+        final Coordinate max = this.bst.maximum();
+        final Event minVal = this.bst.find(max);
+        this.bst.remove(max,null);
 
         return minVal;
     }

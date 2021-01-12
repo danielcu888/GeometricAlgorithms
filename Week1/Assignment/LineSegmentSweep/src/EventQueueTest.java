@@ -22,17 +22,17 @@ class EventQueueTest {
 
         final Event e1 = q.dequeue();
         assertNotEquals(null, e1);
-        assertEquals(s, e1.coord);
+        assertEquals(e, e1.coord);
         assertEquals(ls, e1.ls1);
         assertEquals(null, e1.ls2);
-        assertEquals(EventType.START, e1.type);
+        assertEquals(EventType.END, e1.type);
 
         final Event e2 = q.dequeue();
         assertNotEquals(null, e2);
-        assertEquals(e, e2.coord);
+        assertEquals(s, e2.coord);
         assertEquals(ls, e2.ls1);
         assertEquals(null, e2.ls2);
-        assertEquals(EventType.END, e2.type);
+        assertEquals(EventType.START, e2.type);
     }
 
     @Test
@@ -63,23 +63,23 @@ class EventQueueTest {
         q.enqueue(end1);
         q.enqueue(inx12);
 
-        // Start of second LineSegment
+        // End of second LineSegment
         assertFalse(q.empty());
         final Event ev1 = q.dequeue();
         assertNotEquals(null, ev1);
-        assertEquals(s2, ev1.coord);
+        assertEquals(e2, ev1.coord);
         assertEquals(ls2, ev1.ls1);
         assertEquals(null, ev1.ls2);
-        assertEquals(EventType.START, ev1.type);
+        assertEquals(EventType.END, ev1.type);
 
-        // Start of first LineSegment
+        // End of first LineSegment
         assertFalse(q.empty());
         final Event ev2 = q.dequeue();
         assertNotEquals(null, ev2);
-        assertEquals(s1, ev2.coord);
+        assertEquals(e1, ev2.coord);
         assertEquals(ls1, ev2.ls1);
         assertEquals(null, ev2.ls2);
-        assertEquals(EventType.START, ev2.type);
+        assertEquals(EventType.END, ev2.type);
 
         // Intersection
         assertFalse(q.empty());
@@ -90,23 +90,23 @@ class EventQueueTest {
         assertEquals(ls2, ev3.ls2);
         assertEquals(EventType.POINT_INTERSECTION, ev3.type);
 
-        // End of first LineSegment
+        // Start of first LineSegment
         assertFalse(q.empty());
         final Event ev4 = q.dequeue();
         assertNotEquals(null, ev4);
-        assertEquals(e1, ev4.coord);
+        assertEquals(s1, ev4.coord);
         assertEquals(ls1, ev4.ls1);
         assertEquals(null, ev4.ls2);
-        assertEquals(EventType.END, ev4.type);
+        assertEquals(EventType.START, ev4.type);
 
-        // End of second LineSegment
+        // Start of second LineSegment
         assertFalse(q.empty());
         final Event ev5 = q.dequeue();
         assertNotEquals(null, ev5);
-        assertEquals(e2, ev5.coord);
+        assertEquals(s2, ev5.coord);
         assertEquals(ls2, ev5.ls1);
         assertEquals(null, ev5.ls2);
-        assertEquals(EventType.END, ev5.type);
+        assertEquals(EventType.START, ev5.type);
 
         assertTrue(q.empty());
     }
@@ -126,17 +126,17 @@ class EventQueueTest {
 
         final Event e1 = q.dequeue();
         assertNotEquals(null, e1);
-        assertEquals(s, e1.coord);
+        assertEquals(e, e1.coord);
         assertEquals(ls, e1.ls1);
         assertEquals(null, e1.ls2);
-        assertEquals(EventType.START, e1.type);
+        assertEquals(EventType.END, e1.type);
 
         final Event e2 = q.dequeue();
         assertNotEquals(null, e2);
-        assertEquals(e, e2.coord);
+        assertEquals(s, e2.coord);
         assertEquals(ls, e2.ls1);
         assertEquals(null, e2.ls2);
-        assertEquals(EventType.END, e2.type);
+        assertEquals(EventType.START, e2.type);
     }
 
     @Test
@@ -164,50 +164,50 @@ class EventQueueTest {
         q.enqueue(ev5);
         q.enqueue(ev3);
 
-        // Start of first LineSegment
+        // End of second LineSegment
         assertFalse(q.empty());
         final Event aev1 = q.dequeue();
         assertNotEquals(null, aev1);
-        assertEquals(s1, aev1.coord);
-        assertEquals(ls1, aev1.ls1);
+        assertEquals(e2, aev1.coord);
+        assertEquals(ls2, aev1.ls1);
         assertEquals(null, aev1.ls2);
-        assertEquals(EventType.START, aev1.type);
+        assertEquals(EventType.END, aev1.type);
 
         // End of first LineSegment
         assertFalse(q.empty());
-        final Event aev2 = q.dequeue();
-        assertNotEquals(null, aev2);
-        assertEquals(e1, aev2.coord);
-        assertEquals(ls1, aev2.ls1);
-        assertEquals(null, aev2.ls2);
-        assertEquals(EventType.END, aev2.type);
+        final Event aev4 = q.dequeue();
+        assertNotEquals(null, aev4);
+        assertEquals(e1, aev4.coord);
+        assertEquals(ls1, aev4.ls1);
+        assertEquals(null, aev4.ls2);
+        assertEquals(EventType.END, aev4.type);
 
         // Start of second LineSegment
         assertFalse(q.empty());
-        final Event aev4 = q.dequeue();
-        assertNotEquals(null, aev4);
-        assertEquals(s2, aev4.coord);
-        assertEquals(ls2, aev4.ls1);
-        assertEquals(null, aev4.ls2);
-        assertEquals(EventType.START, aev4.type);
+        final Event aev3 = q.dequeue();
+        assertNotEquals(null, aev3);
+        assertEquals(s2, aev3.coord);
+        assertEquals(ls2, aev3.ls1);
+        assertEquals(null, aev3.ls2);
+        assertEquals(EventType.START, aev3.type);
 
         // Intersection
         assertFalse(q.empty());
-        final Event aev3 = q.dequeue();
-        assertNotEquals(null, aev3);
-        assertEquals(inx, aev3.coord);
-        assertEquals(ls1, aev3.ls1);
-        assertEquals(ls2, aev3.ls2);
-        assertEquals(EventType.POINT_INTERSECTION, aev3.type);
+        final Event aev2 = q.dequeue();
+        assertNotEquals(null, aev2);
+        assertEquals(inx, aev2.coord);
+        assertEquals(ls1, aev2.ls1);
+        assertEquals(ls2, aev2.ls2);
+        assertEquals(EventType.POINT_INTERSECTION, aev2.type);
 
-        // End of second LineSegment
+        // Start of first LineSegment
         assertFalse(q.empty());
         final Event aev5 = q.dequeue();
         assertNotEquals(null, aev5);
-        assertEquals(e2, aev5.coord);
-        assertEquals(ls2, aev5.ls1);
+        assertEquals(s1, aev5.coord);
+        assertEquals(ls1, aev5.ls1);
         assertEquals(null, aev5.ls2);
-        assertEquals(EventType.END, aev5.type);
+        assertEquals(EventType.START, aev5.type);
 
         assertTrue(q.empty());
     }
@@ -237,23 +237,23 @@ class EventQueueTest {
         q.enqueue(ev3);
         q.enqueue(ev4);
 
-        // Start of first LineSegment
+        // End of second LineSegment
         assertFalse(q.empty());
         final Event aev1 = q.dequeue();
         assertNotEquals(null, aev1);
-        assertEquals(s1, aev1.coord);
-        assertEquals(ls1, aev1.ls1);
+        assertEquals(e2, aev1.coord);
+        assertEquals(ls2, aev1.ls1);
         assertEquals(null, aev1.ls2);
-        assertEquals(EventType.START, aev1.type);
+        assertEquals(EventType.END, aev1.type);
 
         // End of first LineSegment
         assertFalse(q.empty());
-        final Event aev2 = q.dequeue();
-        assertNotEquals(null, aev2);
-        assertEquals(e1, aev2.coord);
-        assertEquals(ls1, aev2.ls1);
-        assertEquals(null, aev2.ls2);
-        assertEquals(EventType.END, aev2.type);
+        final Event aev4 = q.dequeue();
+        assertNotEquals(null, aev4);
+        assertEquals(e1, aev4.coord);
+        assertEquals(ls1, aev4.ls1);
+        assertEquals(null, aev4.ls2);
+        assertEquals(EventType.END, aev4.type);
 
         // Intersection
         assertFalse(q.empty());
@@ -266,21 +266,21 @@ class EventQueueTest {
 
         // Start of second LineSegment
         assertFalse(q.empty());
-        final Event aev4 = q.dequeue();
-        assertNotEquals(null, aev4);
-        assertEquals(s2, aev4.coord);
-        assertEquals(ls2, aev4.ls1);
-        assertEquals(null, aev4.ls2);
-        assertEquals(EventType.START, aev4.type);
+        final Event aev2 = q.dequeue();
+        assertNotEquals(null, aev2);
+        assertEquals(s2, aev2.coord);
+        assertEquals(ls2, aev2.ls1);
+        assertEquals(null, aev2.ls2);
+        assertEquals(EventType.START, aev2.type);
 
-        // End of second LineSegment
+        // Start of first LineSegment
         assertFalse(q.empty());
         final Event aev5 = q.dequeue();
         assertNotEquals(null, aev5);
-        assertEquals(e2, aev5.coord);
-        assertEquals(ls2, aev5.ls1);
+        assertEquals(s1, aev5.coord);
+        assertEquals(ls1, aev5.ls1);
         assertEquals(null, aev5.ls2);
-        assertEquals(EventType.END, aev5.type);
+        assertEquals(EventType.START, aev5.type);
 
         assertTrue(q.empty());
     }
@@ -309,43 +309,42 @@ class EventQueueTest {
         q.enqueue(ev3);
         q.enqueue(ev4);
 
-        // Start of first LineSegment
+        // End of second LineSegment
         assertFalse(q.empty());
         final Event aev1 = q.dequeue();
         assertNotEquals(null, aev1);
-        assertEquals(s1, aev1.coord);
-        assertEquals(ls1, aev1.ls1);
+        assertEquals(e2, aev1.coord);
+        assertEquals(ls2, aev1.ls1);
         assertEquals(null, aev1.ls2);
-        assertEquals(EventType.START, aev1.type);
-
-        // End of first LineSegment
-        assertFalse(q.empty());
-        final Event aev2 = q.dequeue();
-        assertNotEquals(null, aev2);
-        assertEquals(e1, aev2.coord);
-        assertEquals(ls1, aev2.ls1);
-        assertEquals(null, aev2.ls2);
-        assertEquals(EventType.END, aev2.type);
+        assertEquals(EventType.END, aev1.type);
 
         // Start of second LineSegment
         assertFalse(q.empty());
+        final Event aev2 = q.dequeue();
+        assertNotEquals(null, aev2);
+        assertEquals(s2, aev2.coord);
+        assertEquals(ls2, aev2.ls1);
+        assertEquals(null, aev2.ls2);
+        assertEquals(EventType.START, aev2.type);
+
+        // End of first LineSegment
+        assertFalse(q.empty());
         final Event aev3 = q.dequeue();
         assertNotEquals(null, aev3);
-        assertEquals(s2, aev3.coord);
-        assertEquals(ls2, aev3.ls1);
+        assertEquals(e1, aev3.coord);
+        assertEquals(ls1, aev3.ls1);
         assertEquals(null, aev3.ls2);
-        assertEquals(EventType.START, aev3.type);
+        assertEquals(EventType.END, aev3.type);
 
-        // End of second LineSegment
+        // Start of first LineSegment
         assertFalse(q.empty());
         final Event aev4 = q.dequeue();
         assertNotEquals(null, aev4);
-        assertEquals(e2, aev4.coord);
-        assertEquals(ls2, aev4.ls1);
+        assertEquals(s1, aev4.coord);
+        assertEquals(ls1, aev4.ls1);
         assertEquals(null, aev4.ls2);
-        assertEquals(EventType.END, aev4.type);
+        assertEquals(EventType.START, aev4.type);
 
         assertTrue(q.empty());
     }
-
 }

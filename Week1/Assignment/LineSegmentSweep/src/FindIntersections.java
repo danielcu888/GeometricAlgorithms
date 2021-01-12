@@ -1,8 +1,9 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class FindIntersections {
 
-    private static boolean ENABLE_DEBUGGING = false;
+    private static boolean ENABLE_DEBUGGING = true;
     private static boolean PRINT_RESULTS = true;
 
     // Private data members
@@ -314,8 +315,8 @@ public class FindIntersections {
                 throw new IllegalArgumentException("null LineSegment.");
             }
 
-            // Clone and reverse any LineSegment that has start.y > end.y.
-            if (ls.start.y > ls.end.y) {
+            // Clone and reverse any LineSegment that has end.y > start.y.
+            if (ls.end.y > ls.start.y) {
                 // Clone and reverse.
                 ls = new LineSegment(ls.id,ls.end,ls.start);
             }
@@ -338,7 +339,7 @@ public class FindIntersections {
         // Construct empty Status.
         final Status s = new Status();
 
-        // Process Events at increasing y values.
+        // Process Events at decreasing y values.
         while (!q.empty()) {
 
             // Retrieve next Event.
@@ -371,11 +372,14 @@ public class FindIntersections {
         if (!this.inx.isEmpty()) {
             // Remove duplicate intersection Events.
 
-            // 1. sort the intersection events in ascending y-value.
+                ArrayList<Event> filtered_inx = new ArrayList<Event>();
+
+            // 1. sort the intersection events in descending y-value.
             this.inx.sort(new IntersectionEventComparator());
+            Collections.reverse(this.inx);
 
             // 2. Iterate through Events with the same y and remove all Events with
-            //    that have the same LineSegment references. When an Event with a larger
+            //    that have the same LineSegment references. When an Event with a smaller
             //    y is found, repeat the process using that Event as the reference.
             Event referenceEvent = null;
             for (Event e : this.inx) {
@@ -385,14 +389,27 @@ public class FindIntersections {
                     throw new IllegalStateException("Non-intersection Event found.");
                 }
 
-                if ((referenceEvent == null) || (referenceEvent.coord.y < e.coord.y)) {
+                if (referenceEvent == null) {
+                        // Add the reference Event to the filtered Event set.
+                        filtered_inx.add(e);
+
                     // Set new reference Event.
-                    referenceEvent = e;
-                } else if ((e.ls1 == referenceEvent.ls1) && (e.ls2 == referenceEvent.ls2)) {
-                    // There can only be 1 intersection Event involving the same 2 LineSegments - remove duplicate.
-                    this.inx.remove(e);
+                        referenceEvent = e;
+                } else if ((e.coord.y < referenceEvent.coord.y) ||
+                                                   (e.ls1 != referenceEvent.ls1) ||
+                                                   (e.ls2 != referenceEvent.ls2)) {
+                                        // Event e occurs at different y to reference Event or
+                                        // is a non-duplicate Event at the same y.
+
+                                        // Set new reference Event.
+                                        referenceEvent = e;
+
+                                        // Add the reference Event to the filtered Event set.
+                                        filtered_inx.add(referenceEvent);
                 }
             }
+
+            this.inx = filtered_inx;
 
             if (FindIntersections.PRINT_RESULTS) {
                 if (this.inx.isEmpty()) {

@@ -20,7 +20,7 @@ class FindIntersectionsTest {
     }
 
     @Test
-    void testFindIntersections() {
+    void testFindIntersectionsNoSegments() {
         final ArrayList<LineSegment> segments = new ArrayList<LineSegment>();
         final FindIntersections fi = new FindIntersections(segments);
         assertNotEquals(null, fi);
@@ -31,7 +31,7 @@ class FindIntersectionsTest {
     }
 
     @Test
-    void testFindIntersections2() {
+    void testFindIntersectionsTwoSegments() {
         final Coordinate s1 = new Coordinate(0,0);
         final Coordinate e1 = new Coordinate(1,1);
         final LineSegment ls1 = new LineSegment(1,s1,e1);
@@ -56,7 +56,11 @@ class FindIntersectionsTest {
         assertEquals(EventType.POINT_INTERSECTION, inx.type);
         assertEquals(0.5, inx.coord.x);
         assertEquals(0.5, inx.coord.y);
-        assertEquals(ls1, inx.ls1);
-        assertEquals(ls2, inx.ls2);
+        assertEquals(ls1.id, inx.ls1.id);
+        assertEquals(0, inx.ls1.start.compareTo(e1));
+        assertEquals(0, inx.ls1.end.compareTo(s1));
+        assertEquals(ls2.id, inx.ls2.id);
+        assertEquals(0, inx.ls2.start.compareTo(e2));
+        assertEquals(0, inx.ls2.end.compareTo(s2));
     }
 }

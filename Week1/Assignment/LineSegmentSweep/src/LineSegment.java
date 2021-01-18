@@ -364,10 +364,10 @@ public class LineSegment {
     @Override
     public String toString() {
         return "L[" +
-                        this.id + "," +
-                        this.start.toString() +
-                        "," +
-                        this.end.toString() +
+                        this.id + //"," +
+//                        this.start.toString() +
+//                        "," +
+//                        this.end.toString() +
                         "]";
     }
 }

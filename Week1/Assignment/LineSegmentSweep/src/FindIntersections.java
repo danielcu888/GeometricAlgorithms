@@ -5,7 +5,7 @@ public class FindIntersections {
 
     // Private data members
 
-    private static boolean ENABLE_DEBUGGING = false;
+    private static boolean ENABLE_DEBUGGING = true;
     private static boolean PRINT_RESULTS = true;
     private ArrayList<Event> inx = null;
     private int totalNumberOfEvents = 0;
@@ -53,40 +53,50 @@ public class FindIntersections {
         //    associated with the start of one of the intersecting lines).
 
         if (pred_inx != null) {
+            if (pred_inx.coord.y <= e.coord.y) {
+                    final LineSegment ls1 = (e.ls1.id < pred.value.id) ? e.ls1 : pred.value;
+                    final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : pred.value;
 
-            final LineSegment ls1 = (e.ls1.id < pred.value.id) ? e.ls1 : pred.value;
-            final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : pred.value;
+                    Event new_event = null;
+                    switch (pred_inx.dim) {
+                    case POINT:
+                        new_event = new Event(EventType.POINT_INTERSECTION, pred_inx.coord, ls1, ls2);
+                        break;
+                    case LINE:
+                        new_event = new Event(EventType.LINE_INTERSECTION, pred_inx.coord, ls1, ls2);
+                        break;
+                    case UNKNOWN:
+                        throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
+                    default:
+                        throw new IllegalStateException("Unrecognised InxDim");
+                    }
 
-            switch (pred_inx.dim) {
-            case POINT:
-                q.enqueue(new Event(EventType.POINT_INTERSECTION, pred_inx.coord, ls1, ls2));
-                break;
-            case LINE:
-                q.enqueue(new Event(EventType.LINE_INTERSECTION, pred_inx.coord, ls1, ls2));
-                break;
-            case UNKNOWN:
-                throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
-            default:
-                throw new IllegalStateException("Unrecognised InxDim");
+                    System.out.println("Found intersection: " + new_event);
+                    q.enqueue(new_event);
             }
         }
 
         if (succ_inx != null) {
+            if (succ_inx.coord.y <= e.coord.y) {
+                    final LineSegment ls1 = (e.ls1.id < succ.value.id) ? e.ls1 : succ.value;
+                    final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : succ.value;
 
-            final LineSegment ls1 = (e.ls1.id < succ.value.id) ? e.ls1 : succ.value;
-            final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : succ.value;
+                    Event new_event = null;
+                    switch (succ_inx.dim) {
+                    case POINT:
+                        new_event = new Event(EventType.POINT_INTERSECTION, succ_inx.coord, ls1, ls2);
+                        break;
+                    case LINE:
+                        new_event = new Event(EventType.LINE_INTERSECTION, succ_inx.coord, ls1, ls2);
+                        break;
+                    case UNKNOWN:
+                        throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
+                    default:
+                        throw new IllegalStateException("Unrecognised InxDim");
+                    }
 
-            switch (succ_inx.dim) {
-            case POINT:
-                q.enqueue(new Event(EventType.POINT_INTERSECTION, succ_inx.coord, ls1, ls2));
-                break;
-            case LINE:
-                q.enqueue(new Event(EventType.LINE_INTERSECTION, succ_inx.coord, ls1, ls2));
-                break;
-            case UNKNOWN:
-                throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
-            default:
-                throw new IllegalStateException("Unrecognised InxDim");
+                    System.out.println("Found intersection: " + new_event);
+                    q.enqueue(new_event);
             }
         }
     }
@@ -125,23 +135,27 @@ public class FindIntersections {
         //    event since we must have processed them before.
 
         if (inx != null) {
-            if (inx.coord.y >= e.coord.y) {
+            if (inx.coord.y <= e.coord.y) {
 
                 final LineSegment ls1 = (pred.value.id < succ.value.id) ? pred.value : succ.value;
                 final LineSegment ls2 = (ls1 != pred.value) ? pred.value : succ.value;
 
+                Event new_event = null;
                 switch (inx.dim) {
                 case POINT:
-                    q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                    new_event = new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2);
                     break;
                 case LINE:
-                    q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2));
+                    new_event = new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2);
                     break;
                 case UNKNOWN:
                     throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
                 default:
                     throw new IllegalStateException("Unrecognised InxDim");
                 }
+
+                System.out.println("Found intersection: " + new_event);
+                q.enqueue(new_event);
             }
         }
     }
@@ -181,23 +195,27 @@ public class FindIntersections {
             final InxData inx = LineSegment.intersection(e.ls1, pred1.value);
 
             if (inx != null) {
-                if (inx.coord.y >= e.coord.y) {
+                if (inx.coord.y <= e.coord.y) {
 
                     final LineSegment ls1 = (e.ls1.id < pred1.value.id) ? e.ls1 : pred1.value;
                     final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : pred1.value;
 
+                    Event new_event = null;
                     switch (inx.dim) {
                     case POINT:
-                        q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                        new_event = new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2);
                         break;
                     case LINE:
-                        q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2));
+                        new_event = new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2);
                         break;
                     case UNKNOWN:
                         throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
                     default:
                         throw new IllegalStateException("Unrecognised InxDim");
                     }
+
+                    System.out.println("Found intersection: " + new_event);
+                    q.enqueue(new_event);
                 }
             }
         }
@@ -210,23 +228,27 @@ public class FindIntersections {
             final InxData inx = LineSegment.intersection(e.ls1, suc1.value);
 
             if (inx != null) {
-                if (inx.coord.y >= e.coord.y) {
+                if (inx.coord.y <= e.coord.y) {
 
                     final LineSegment ls1 = (e.ls1.id < suc1.value.id) ? e.ls1 : suc1.value;
                     final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : suc1.value;
 
+                    Event new_event = null;
                     switch (inx.dim) {
                     case POINT:
-                        q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                        new_event = new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2);
                         break;
                     case LINE:
-                        q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2));
+                        new_event = new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2);
                         break;
                     case UNKNOWN:
                         throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
                     default:
                         throw new IllegalStateException("Unrecognised InxDim");
                     }
+
+                    System.out.println("Found intersection: " + new_event);
+                    q.enqueue(new_event);
                 }
             }
         }
@@ -239,23 +261,27 @@ public class FindIntersections {
             final InxData inx = LineSegment.intersection(e.ls2, pred2.value);
 
             if (inx != null) {
-                if (inx.coord.y >= e.coord.y) {
+                if (inx.coord.y <= e.coord.y) {
 
                     final LineSegment ls1 = (e.ls2.id < pred2.value.id) ? e.ls2 : pred2.value;
                     final LineSegment ls2 = (ls1 != e.ls2) ? e.ls2 : pred2.value;
 
+                    Event new_event = null;
                     switch (inx.dim) {
                     case POINT:
-                        q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                        new_event = new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2);
                         break;
                     case LINE:
-                        q.enqueue(new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2));
+                        new_event = new Event(EventType.LINE_INTERSECTION, inx.coord, ls1, ls2);
                         break;
                     case UNKNOWN:
                         throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
                     default:
                         throw new IllegalStateException("Unrecognised InxDim");
                     }
+
+                    System.out.println("Found intersection: " + new_event);
+                    q.enqueue(new_event);
                 }
             }
         }
@@ -268,23 +294,27 @@ public class FindIntersections {
             final InxData inx = LineSegment.intersection(e.ls2, suc2.value);
 
             if (inx != null) {
-                if (inx.coord.y >= e.coord.y) {
+                if (inx.coord.y <= e.coord.y) {
 
                     final LineSegment ls1 = (e.ls2.id < suc2.value.id) ? e.ls2 : suc2.value;
                     final LineSegment ls2 = (ls1 != e.ls2) ? e.ls2 : suc2.value;
 
+                    Event new_event = null;
                     switch (inx.dim) {
                     case POINT:
-                        q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                        new_event = new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2);
                         break;
                     case LINE:
-                        q.enqueue(new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2));
+                        new_event = new Event(EventType.POINT_INTERSECTION, inx.coord, ls1, ls2);
                         break;
                     case UNKNOWN:
                         throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
                     default:
                         throw new IllegalStateException("Unrecognised InxDim");
                     }
+
+                    System.out.println("Found intersection: " + new_event);
+                    q.enqueue(new_event);
                 }
             }
         }
@@ -333,7 +363,7 @@ public class FindIntersections {
             this.events.add(s);
 
             if (FindIntersections.ENABLE_DEBUGGING) {
-                System.out.println(q.toString());
+                //System.out.println(q.toString());
             }
 
             final Event e = new Event(EventType.END, ls.end, ls);
@@ -341,7 +371,7 @@ public class FindIntersections {
             this.events.add(e);
 
             if (FindIntersections.ENABLE_DEBUGGING) {
-                System.out.println(q.toString());
+                //System.out.println(q.toString());
             }
         }
 
@@ -358,7 +388,7 @@ public class FindIntersections {
 
             if (FindIntersections.ENABLE_DEBUGGING) {
                 System.out.println("Processing event: " + e.toString() + "...");
-                System.out.println(q.toString());
+                //System.out.println(q.toString());
             }
 
             // Switch on type of current Event.
@@ -377,6 +407,11 @@ public class FindIntersections {
                 break;
             default:
                 throw new IllegalArgumentException("Unrecognised EventType: " + et);
+            }
+
+            if (FindIntersections.ENABLE_DEBUGGING) {
+                System.out.println(s.toString());
+                System.out.println();
             }
         }
 
@@ -408,7 +443,7 @@ public class FindIntersections {
 
                     // Set new reference Event.
                     referenceEvent = e;
-                } else if ((e.coord.y < referenceEvent.coord.y) ||
+                } else if ((Math.abs(e.coord.y - referenceEvent.coord.y) > 1e-11) ||
                            (e.ls1 != referenceEvent.ls1) ||
                            (e.ls2 != referenceEvent.ls2)) {
                     // Event e occurs at different y to reference Event or

@@ -8,8 +8,8 @@ public class FindIntersections {
     private static boolean ENABLE_DEBUGGING = true;
     private static boolean PRINT_RESULTS = true;
     private ArrayList<Event> inx = null;
-    private int totalNumberOfEvents = 0;
     private ArrayList<Event> events = null;
+    private boolean[][] marked = null;
 
     // Private methods
 
@@ -39,12 +39,32 @@ public class FindIntersections {
 
         InxData pred_inx = null;
         if (pred != null) {
-            pred_inx = LineSegment.intersection(e.ls1, pred.value);
+                // Check we haven't already found the intersection between these two
+                // LineSegments.
+                if (!this.marked[e.ls1.id][pred.value.id]) {
+                        pred_inx = LineSegment.intersection(e.ls1, pred.value);
+                } else {
+                        System.out.println("Already found intersection between segments: "
+                                                           + e.ls1.id
+                                                           + " and "
+                                                           + pred.value.id
+                                                          );
+                }
         }
 
         InxData succ_inx = null;
         if (succ != null) {
-            succ_inx = LineSegment.intersection(e.ls1, succ.value);
+                // Check we haven't already found the intersection between these two
+                // LineSegments.
+                if (!this.marked[e.ls1.id][succ.value.id]) {
+                        succ_inx = LineSegment.intersection(e.ls1, succ.value);
+                } else {
+                        System.out.println("Already found intersection between segments: "
+                                                                   + e.ls1.id
+                                                                   + " and "
+                                                                   + succ.value.id
+                                                                  );
+                }
         }
 
         // 4. If any intersections are found, enqueue them as Events, with the
@@ -53,7 +73,7 @@ public class FindIntersections {
         //    associated with the start of one of the intersecting lines).
 
         if (pred_inx != null) {
-            if (pred_inx.coord.y <= e.coord.y) {
+            if ((pred_inx.coord.y <= e.coord.y)) {
                     final LineSegment ls1 = (e.ls1.id < pred.value.id) ? e.ls1 : pred.value;
                     final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : pred.value;
 
@@ -73,11 +93,14 @@ public class FindIntersections {
 
                     System.out.println("Found intersection: " + new_event);
                     q.enqueue(new_event);
+
+                    // Update marked with new intersection.
+                    this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
             }
         }
 
         if (succ_inx != null) {
-            if (succ_inx.coord.y <= e.coord.y) {
+            if ((succ_inx.coord.y <= e.coord.y) ) {
                     final LineSegment ls1 = (e.ls1.id < succ.value.id) ? e.ls1 : succ.value;
                     final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : succ.value;
 
@@ -97,6 +120,9 @@ public class FindIntersections {
 
                     System.out.println("Found intersection: " + new_event);
                     q.enqueue(new_event);
+
+                    // Update marked with new intersection.
+                    this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
             }
         }
     }
@@ -125,7 +151,17 @@ public class FindIntersections {
         //    removed LineSegment.
         InxData inx = null;
         if ((pred != null) && (succ != null)) {
-            inx = LineSegment.intersection(pred.value, succ.value);
+                // Check we haven't already found the intersection between these two
+                // LineSegments.
+                if (!this.marked[pred.value.id][succ.value.id]) {
+                inx = LineSegment.intersection(pred.value, succ.value);
+                } else {
+                        System.out.println("Already found intersection between segments: "
+                                                                   + pred.value.id
+                                                                   + " and "
+                                                                   + succ.value.id
+                                                                  );
+                }
         }
 
         // 4. If an intersection is found then add it as an Event to the
@@ -156,6 +192,9 @@ public class FindIntersections {
 
                 System.out.println("Found intersection: " + new_event);
                 q.enqueue(new_event);
+
+                // Update marked with new intersection.
+                this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
             }
         }
     }
@@ -192,7 +231,18 @@ public class FindIntersections {
 
         if ((pred1 != null) && (pred1.value != e.ls2)) {
 
-            final InxData inx = LineSegment.intersection(e.ls1, pred1.value);
+            InxData inx = null;
+                // Check we haven't already found the intersection between these two
+                // LineSegments.
+                if (!this.marked[pred1.value.id][e.ls1.id]) {
+                inx = LineSegment.intersection(e.ls1, pred1.value);
+                } else {
+                        System.out.println("Already found intersection between segments: "
+                                                                   + pred1.value.id
+                                                                   + " and "
+                                                                   + e.ls1.id
+                                                                  );
+                }
 
             if (inx != null) {
                 if (inx.coord.y <= e.coord.y) {
@@ -216,6 +266,9 @@ public class FindIntersections {
 
                     System.out.println("Found intersection: " + new_event);
                     q.enqueue(new_event);
+
+                    // Update marked with new intersection.
+                    this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
                 }
             }
         }
@@ -225,7 +278,18 @@ public class FindIntersections {
 
         if ((suc1 != null) && (suc1.value != e.ls1)) {
 
-            final InxData inx = LineSegment.intersection(e.ls1, suc1.value);
+            InxData inx = null;
+                // Check we haven't already found the intersection between these two
+                // LineSegments.
+                if (!this.marked[suc1.value.id][e.ls1.id]) {
+                inx = LineSegment.intersection(e.ls1, suc1.value);
+                } else {
+                        System.out.println("Already found intersection between segments: "
+                                                                   + suc1.value.id
+                                                                   + " and "
+                                                                   + e.ls1.id
+                                                                  );
+                }
 
             if (inx != null) {
                 if (inx.coord.y <= e.coord.y) {
@@ -249,6 +313,9 @@ public class FindIntersections {
 
                     System.out.println("Found intersection: " + new_event);
                     q.enqueue(new_event);
+
+                    // Update marked with new intersection.
+                    this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
                 }
             }
         }
@@ -258,7 +325,18 @@ public class FindIntersections {
 
         if ((pred2 != null) && (pred2.value != e.ls1)) {
 
-            final InxData inx = LineSegment.intersection(e.ls2, pred2.value);
+            InxData inx = null;
+                // Check we haven't already found the intersection between these two
+                // LineSegments.
+                if (!this.marked[pred2.value.id][e.ls2.id]) {
+                inx = LineSegment.intersection(e.ls2, pred2.value);
+                } else {
+                        System.out.println("Already found intersection between segments: "
+                                                                   + pred2.value.id
+                                                                   + " and "
+                                                                   + e.ls2.id
+                                                                  );
+                }
 
             if (inx != null) {
                 if (inx.coord.y <= e.coord.y) {
@@ -282,6 +360,9 @@ public class FindIntersections {
 
                     System.out.println("Found intersection: " + new_event);
                     q.enqueue(new_event);
+
+                    // Update marked with new intersection.
+                    this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
                 }
             }
         }
@@ -291,7 +372,18 @@ public class FindIntersections {
 
         if ((suc2 != null) && (suc2.value != e.ls1)) {
 
-            final InxData inx = LineSegment.intersection(e.ls2, suc2.value);
+            InxData inx = null;
+                // Check we haven't already found the intersection between these two
+                // LineSegments.
+                if (!this.marked[suc2.value.id][e.ls2.id]) {
+                inx = LineSegment.intersection(e.ls2, suc2.value);
+                } else {
+                        System.out.println("Already found intersection between segments: "
+                                                                   + suc2.value.id
+                                                                   + " and "
+                                                                   + e.ls2.id
+                                                                  );
+                }
 
             if (inx != null) {
                 if (inx.coord.y <= e.coord.y) {
@@ -315,6 +407,9 @@ public class FindIntersections {
 
                     System.out.println("Found intersection: " + new_event);
                     q.enqueue(new_event);
+
+                    // Update marked with new intersection.
+                    this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
                 }
             }
         }
@@ -327,6 +422,9 @@ public class FindIntersections {
      * intersections are to be found.
      * @param segments A collection of LineSegments whose
      *   intersections are to be found.
+     * @warning This will overwrite the ids of the segments
+     *   so that they are equal to the respective index of the
+     *   ArrayList at which each resides.
      */
     FindIntersections(ArrayList<LineSegment> segments) {
 
@@ -344,17 +442,21 @@ public class FindIntersections {
         final EventQueue q = new EventQueue();
 
         // Populate the EventQueue with the START and END Events.
+        int id = 0;
         for (LineSegment ls : segments) {
 
-            if (ls == null) {
-                throw new IllegalArgumentException("null LineSegment.");
-            }
+                if (ls == null) {
+                        throw new IllegalArgumentException("null LineSegment.");
+                }
 
             // Clone and reverse any LineSegment that has end.y > start.y.
             if (ls.end.y > ls.start.y) {
                 // Clone and reverse.
                 ls = new LineSegment(ls.id,ls.end,ls.start);
             }
+
+            // Set id
+            ls.id = id++;
 
             // Add the endpoint events for the current LineSegment.
 
@@ -375,7 +477,18 @@ public class FindIntersections {
             }
         }
 
-        this.totalNumberOfEvents = segments.size() * 2;
+        // Initialise marked array.
+
+        // 1. Initialise all segments as non-intersecting.
+        this.marked = new boolean[segments.size()][];
+        for (int i = 0; i < segments.size(); ++i) {
+                this.marked[i] = new boolean[segments.size()];
+        }
+
+        // 2. Initialise segments as self-intersecting.
+        for (int i = 0; i < segments.size(); ++i) {
+                this.marked[i][i] = true;
+        }
 
         // Construct empty Status.
         final Status s = new Status();

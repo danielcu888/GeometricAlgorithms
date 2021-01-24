@@ -544,11 +544,15 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
                 if (n.parent != null) {
                     if (n.parent.right == n) {
                         n.parent.right = n.right;
-                        this.minimum(n.right).left = n.left;
+                        final BinarySearchTreeNode<Key,Value> m = this.minimum(n.right);
+                        m.left = n.left;
+                        m.left.parent = m;
                         n.parent.right.parent = n.parent;
                     } else {
                         n.parent.left = n.right;
-                        this.minimum(n.right).left = n.left;
+                        final BinarySearchTreeNode<Key,Value> m = this.minimum(n.right);
+                        m.left = n.left;
+                        m.left.parent = m;
                         n.parent.left.parent = n.parent;
                     }
                 } else {

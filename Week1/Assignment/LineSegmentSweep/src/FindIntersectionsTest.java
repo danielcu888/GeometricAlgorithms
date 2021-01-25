@@ -6,16 +6,16 @@ import org.junit.jupiter.api.Test;
 
 class FindIntersectionsTest {
 
-        private static double TOL = 1e-12;
+	private static double TOL = 1e-12;
 
     private void verifyEvent( ArrayList<Event> events
-                                                        , int index
-                                                        , EventType type
-                                                        , double x
-                                                        , double y
-                                                        , Integer id1
-                                                        , Integer id2
-                                                        )
+                            , int index
+                            , EventType type
+                            , double x
+                            , double y
+                            , Integer id1
+                            , Integer id2
+                            )
     {
         assertNotEquals(null, events);
         final Event e = events.get(index);

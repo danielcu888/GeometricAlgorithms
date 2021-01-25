@@ -5,8 +5,9 @@ public class FindIntersections {
 
     // Private data members
 
-    private static boolean ENABLE_DEBUGGING = true;
-    private static boolean PRINT_RESULTS = true;
+    private static boolean ENABLE_DEBUGGING = false;
+    private static boolean PRINT_RESULTS = false;
+    private static boolean PRINT_SUBMISSION_RESULTS = true;
     private ArrayList<Event> inx = null;
     private ArrayList<Event> events = null;
     private boolean[][] marked = null;
@@ -39,32 +40,32 @@ public class FindIntersections {
 
         InxData pred_inx = null;
         if (pred != null) {
-                // Check we haven't already found the intersection between these two
-                // LineSegments.
-                if (!this.marked[e.ls1.id][pred.value.id]) {
-                        pred_inx = LineSegment.intersection(e.ls1, pred.value);
-                } else {
-                        System.out.println("Already found intersection between segments: "
-                                                           + e.ls1.id
-                                                           + " and "
-                                                           + pred.value.id
-                                                          );
-                }
+            // Check we haven't already found the intersection between these two
+            // LineSegments.
+            if (!this.marked[e.ls1.id][pred.value.id]) {
+                pred_inx = LineSegment.intersection(e.ls1, pred.value);
+            } else if (FindIntersections.ENABLE_DEBUGGING) {
+                System.out.println("Already found intersection between segments: "
+                				   + e.ls1.id
+                                   + " and "
+                                   + pred.value.id
+                                  );
+            }
         }
 
         InxData succ_inx = null;
         if (succ != null) {
-                // Check we haven't already found the intersection between these two
-                // LineSegments.
-                if (!this.marked[e.ls1.id][succ.value.id]) {
-                        succ_inx = LineSegment.intersection(e.ls1, succ.value);
-                } else {
-                        System.out.println("Already found intersection between segments: "
-                                                                   + e.ls1.id
-                                                                   + " and "
-                                                                   + succ.value.id
-                                                                  );
-                }
+            // Check we haven't already found the intersection between these two
+            // LineSegments.
+            if (!this.marked[e.ls1.id][succ.value.id]) {
+                succ_inx = LineSegment.intersection(e.ls1, succ.value);
+            } else if (FindIntersections.ENABLE_DEBUGGING) {
+                System.out.println("Already found intersection between segments: "
+                                   + e.ls1.id
+                                   + " and "
+                                   + succ.value.id
+                                  );
+            }
         }
 
         // 4. If any intersections are found, enqueue them as Events, with the
@@ -74,55 +75,61 @@ public class FindIntersections {
 
         if (pred_inx != null) {
             if ((pred_inx.coord.y <= e.coord.y)) {
-                    final LineSegment ls1 = (e.ls1.id < pred.value.id) ? e.ls1 : pred.value;
-                    final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : pred.value;
+                final LineSegment ls1 = (e.ls1.id < pred.value.id) ? e.ls1 : pred.value;
+                final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : pred.value;
 
-                    Event new_event = null;
-                    switch (pred_inx.dim) {
-                    case POINT:
-                        new_event = new Event(EventType.POINT_INTERSECTION, pred_inx.coord, ls1, ls2);
-                        break;
-                    case LINE:
-                        new_event = new Event(EventType.LINE_INTERSECTION, pred_inx.coord, ls1, ls2);
-                        break;
-                    case UNKNOWN:
-                        throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
-                    default:
-                        throw new IllegalStateException("Unrecognised InxDim");
-                    }
+                Event new_event = null;
+                switch (pred_inx.dim) {
+                case POINT:
+                    new_event = new Event(EventType.POINT_INTERSECTION, pred_inx.coord, ls1, ls2);
+                    break;
+                case LINE:
+                    new_event = new Event(EventType.LINE_INTERSECTION, pred_inx.coord, ls1, ls2);
+                    break;
+                case UNKNOWN:
+                    throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
+                default:
+                    throw new IllegalStateException("Unrecognised InxDim");
+                }
+                
+                if (FindIntersections.ENABLE_DEBUGGING) {
+                	System.out.println("Found intersection: " + new_event);
+                }
+                
+                q.enqueue(new_event);
 
-                    System.out.println("Found intersection: " + new_event);
-                    q.enqueue(new_event);
-
-                    // Update marked with new intersection.
-                    this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
+                // Update marked with new intersection.
+                this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
             }
         }
 
         if (succ_inx != null) {
             if ((succ_inx.coord.y <= e.coord.y) ) {
-                    final LineSegment ls1 = (e.ls1.id < succ.value.id) ? e.ls1 : succ.value;
-                    final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : succ.value;
+                final LineSegment ls1 = (e.ls1.id < succ.value.id) ? e.ls1 : succ.value;
+                final LineSegment ls2 = (ls1 != e.ls1) ? e.ls1 : succ.value;
 
-                    Event new_event = null;
-                    switch (succ_inx.dim) {
-                    case POINT:
-                        new_event = new Event(EventType.POINT_INTERSECTION, succ_inx.coord, ls1, ls2);
-                        break;
-                    case LINE:
-                        new_event = new Event(EventType.LINE_INTERSECTION, succ_inx.coord, ls1, ls2);
-                        break;
-                    case UNKNOWN:
-                        throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
-                    default:
-                        throw new IllegalStateException("Unrecognised InxDim");
-                    }
+                Event new_event = null;
+                switch (succ_inx.dim) {
+                case POINT:
+                    new_event = new Event(EventType.POINT_INTERSECTION, succ_inx.coord, ls1, ls2);
+                    break;
+                case LINE:
+                    new_event = new Event(EventType.LINE_INTERSECTION, succ_inx.coord, ls1, ls2);
+                    break;
+                case UNKNOWN:
+                    throw new IllegalStateException("Did not expect UNKNOWN InxDim.");
+                default:
+                    throw new IllegalStateException("Unrecognised InxDim");
+                }
 
-                    System.out.println("Found intersection: " + new_event);
-                    q.enqueue(new_event);
+                if (FindIntersections.ENABLE_DEBUGGING) {
+                	System.out.println("Found intersection: " + new_event);
+                }
+                
+                q.enqueue(new_event);
 
-                    // Update marked with new intersection.
-                    this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
+                // Update marked with new intersection.
+                this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
             }
         }
     }
@@ -151,17 +158,17 @@ public class FindIntersections {
         //    removed LineSegment.
         InxData inx = null;
         if ((pred != null) && (succ != null)) {
-                // Check we haven't already found the intersection between these two
-                // LineSegments.
-                if (!this.marked[pred.value.id][succ.value.id]) {
-                inx = LineSegment.intersection(pred.value, succ.value);
-                } else {
-                        System.out.println("Already found intersection between segments: "
-                                                                   + pred.value.id
-                                                                   + " and "
-                                                                   + succ.value.id
-                                                                  );
-                }
+            // Check we haven't already found the intersection between these two
+            // LineSegments.
+            if (!this.marked[pred.value.id][succ.value.id]) {
+            	inx = LineSegment.intersection(pred.value, succ.value);
+            } else if (FindIntersections.ENABLE_DEBUGGING) {
+                System.out.println("Already found intersection between segments: "
+	                               + pred.value.id
+	                               + " and "
+	                               + succ.value.id
+	                              );
+            }
         }
 
         // 4. If an intersection is found then add it as an Event to the
@@ -190,8 +197,11 @@ public class FindIntersections {
                     throw new IllegalStateException("Unrecognised InxDim");
                 }
 
-                System.out.println("Found intersection: " + new_event);
-                q.enqueue(new_event);
+                if (FindIntersections.ENABLE_DEBUGGING) {
+                	System.out.println("Found intersection: " + new_event);
+                }
+
+            	q.enqueue(new_event);
 
                 // Update marked with new intersection.
                 this.marked[ls1.id][ls2.id] = this.marked[ls2.id][ls1.id] = true;
@@ -235,13 +245,13 @@ public class FindIntersections {
                 // Check we haven't already found the intersection between these two
                 // LineSegments.
                 if (!this.marked[pred1.value.id][e.ls1.id]) {
-                inx = LineSegment.intersection(e.ls1, pred1.value);
-                } else {
-                        System.out.println("Already found intersection between segments: "
-                                                                   + pred1.value.id
-                                                                   + " and "
-                                                                   + e.ls1.id
-                                                                  );
+                	inx = LineSegment.intersection(e.ls1, pred1.value);
+                } else if (FindIntersections.ENABLE_DEBUGGING) {
+                    System.out.println("Already found intersection between segments: "
+                                       + pred1.value.id
+                                       + " and "
+                                       + e.ls1.id
+                                      );
                 }
 
             if (inx != null) {
@@ -264,7 +274,10 @@ public class FindIntersections {
                         throw new IllegalStateException("Unrecognised InxDim");
                     }
 
-                    System.out.println("Found intersection: " + new_event);
+                    if (FindIntersections.ENABLE_DEBUGGING) {
+                    	System.out.println("Found intersection: " + new_event);
+                    }
+                    
                     q.enqueue(new_event);
 
                     // Update marked with new intersection.
@@ -282,13 +295,13 @@ public class FindIntersections {
                 // Check we haven't already found the intersection between these two
                 // LineSegments.
                 if (!this.marked[suc1.value.id][e.ls1.id]) {
-                inx = LineSegment.intersection(e.ls1, suc1.value);
-                } else {
-                        System.out.println("Already found intersection between segments: "
-                                                                   + suc1.value.id
-                                                                   + " and "
-                                                                   + e.ls1.id
-                                                                  );
+                	inx = LineSegment.intersection(e.ls1, suc1.value);
+                } else if (FindIntersections.ENABLE_DEBUGGING) {
+                    System.out.println("Already found intersection between segments: "
+                                       + suc1.value.id
+                                       + " and "
+                                       + e.ls1.id
+                                      );
                 }
 
             if (inx != null) {
@@ -311,7 +324,10 @@ public class FindIntersections {
                         throw new IllegalStateException("Unrecognised InxDim");
                     }
 
-                    System.out.println("Found intersection: " + new_event);
+                    if (FindIntersections.ENABLE_DEBUGGING) {
+                    	System.out.println("Found intersection: " + new_event);
+                    }
+
                     q.enqueue(new_event);
 
                     // Update marked with new intersection.
@@ -329,13 +345,13 @@ public class FindIntersections {
                 // Check we haven't already found the intersection between these two
                 // LineSegments.
                 if (!this.marked[pred2.value.id][e.ls2.id]) {
-                inx = LineSegment.intersection(e.ls2, pred2.value);
-                } else {
-                        System.out.println("Already found intersection between segments: "
-                                                                   + pred2.value.id
-                                                                   + " and "
-                                                                   + e.ls2.id
-                                                                  );
+                	inx = LineSegment.intersection(e.ls2, pred2.value);
+                } else if (FindIntersections.ENABLE_DEBUGGING) {
+                    System.out.println("Already found intersection between segments: "
+                                       + pred2.value.id
+                                       + " and "
+                                       + e.ls2.id
+                                      );
                 }
 
             if (inx != null) {
@@ -358,7 +374,10 @@ public class FindIntersections {
                         throw new IllegalStateException("Unrecognised InxDim");
                     }
 
-                    System.out.println("Found intersection: " + new_event);
+                    if (FindIntersections.ENABLE_DEBUGGING) {
+                    	System.out.println("Found intersection: " + new_event);
+                    }
+
                     q.enqueue(new_event);
 
                     // Update marked with new intersection.
@@ -376,13 +395,13 @@ public class FindIntersections {
                 // Check we haven't already found the intersection between these two
                 // LineSegments.
                 if (!this.marked[suc2.value.id][e.ls2.id]) {
-                inx = LineSegment.intersection(e.ls2, suc2.value);
-                } else {
-                        System.out.println("Already found intersection between segments: "
-                                                                   + suc2.value.id
-                                                                   + " and "
-                                                                   + e.ls2.id
-                                                                  );
+                	inx = LineSegment.intersection(e.ls2, suc2.value);
+                } else if (FindIntersections.ENABLE_DEBUGGING) {
+                    System.out.println("Already found intersection between segments: "
+	                                   + suc2.value.id
+	                                   + " and "
+	                                   + e.ls2.id
+	                                  );
                 }
 
             if (inx != null) {
@@ -405,7 +424,10 @@ public class FindIntersections {
                         throw new IllegalStateException("Unrecognised InxDim");
                     }
 
-                    System.out.println("Found intersection: " + new_event);
+                    if (FindIntersections.ENABLE_DEBUGGING) {
+                    	System.out.println("Found intersection: " + new_event);
+                    }
+                    
                     q.enqueue(new_event);
 
                     // Update marked with new intersection.
@@ -445,9 +467,9 @@ public class FindIntersections {
         int id = 0;
         for (LineSegment ls : segments) {
 
-                if (ls == null) {
-                        throw new IllegalArgumentException("null LineSegment.");
-                }
+            if (ls == null) {
+                throw new IllegalArgumentException("null LineSegment.");
+            }
 
             // Clone and reverse any LineSegment that has end.y > start.y.
             if (ls.end.y > ls.start.y) {
@@ -465,7 +487,7 @@ public class FindIntersections {
             this.events.add(s);
 
             if (FindIntersections.ENABLE_DEBUGGING) {
-                //System.out.println(q.toString());
+                System.out.println(q.toString());
             }
 
             final Event e = new Event(EventType.END, ls.end, ls);
@@ -473,7 +495,7 @@ public class FindIntersections {
             this.events.add(e);
 
             if (FindIntersections.ENABLE_DEBUGGING) {
-                //System.out.println(q.toString());
+                System.out.println(q.toString());
             }
         }
 
@@ -482,12 +504,12 @@ public class FindIntersections {
         // 1. Initialise all segments as non-intersecting.
         this.marked = new boolean[segments.size()][];
         for (int i = 0; i < segments.size(); ++i) {
-                this.marked[i] = new boolean[segments.size()];
+            this.marked[i] = new boolean[segments.size()];
         }
 
         // 2. Initialise segments as self-intersecting.
         for (int i = 0; i < segments.size(); ++i) {
-                this.marked[i][i] = true;
+            this.marked[i][i] = true;
         }
 
         // Construct empty Status.
@@ -501,7 +523,7 @@ public class FindIntersections {
 
             if (FindIntersections.ENABLE_DEBUGGING) {
                 System.out.println("Processing event: " + e.toString() + "...");
-                //System.out.println(q.toString());
+                System.out.println(q.toString());
             }
 
             // Switch on type of current Event.
@@ -550,7 +572,7 @@ public class FindIntersections {
 
                 if (referenceEvent == null) {
                     // Add the reference Event to the filtered Event set
-                        // and the total Event set.
+                    // and the total Event set.
                     filtered_inx.add(e);
                     this.events.add(e);
 
@@ -583,11 +605,11 @@ public class FindIntersections {
                 // Print intersection Event summary.
                 System.out.println("\n******* Intersections - START ***********");
                 if (this.inx.isEmpty()) {
-                        System.out.println("\n======= No Intersections Found ========");
+                    System.out.println("\n======= No Intersections Found ========");
                 } else {
-                    System.out.println( "======= "
-                                        + this.inx.size()
-                                        + " Intersection(s) Found: ========"
+                    System.out.println("======= "
+                                       + this.inx.size()
+                                       + " Intersection(s) Found: ========"
                                       );
                     int count = 1;
                     for (Event e : this.inx) {
@@ -599,18 +621,45 @@ public class FindIntersections {
                 // Print total Event summary.
                 System.out.println("\n******* All Events - START **************");
                 if (this.events.isEmpty()) {
-                        System.out.println("======= No Events Found ==============");
+                    System.out.println("======= No Events Found ==============");
                 } else {
-                        System.out.println( "======= "
-                                            + this.events.size()
-                                            + " Events(s) Found: =============="
-                                          );
-                        int count = 1;
-                        for (Event e : this.events) {
-                            System.out.println(count++ + ": " + e);
-                        }
+                    System.out.println("======= "
+                                       + this.events.size()
+                                       + " Events(s) Found: =============="
+                                      );
+                    int count = 1;
+                    for (Event e : this.events) {
+                        System.out.println(count++ + ": " + e);
+                    }
                 }
                 System.out.println("******* All Events - END ****************");
+            }
+            
+            if (FindIntersections.PRINT_SUBMISSION_RESULTS) {
+            	System.out.println("Total #intersections: " + this.inx.size());
+            	System.out.println("Total #events: " + this.events.size());
+            	if (this.events.size() > 2) {
+            		System.out.println(
+            			"3rd event was of type: "
+            		    + Event.convertEventTypeToInteger(this.events.get(2))
+            		);
+            	}
+
+            	if (this.events.size() > 16) {
+            		System.out.println(
+            			"17th event was of type: "
+            			+ Event.convertEventTypeToInteger(this.events.get(16))
+            		);
+            	}
+
+            	if (this.events.size() > 98) {
+            		System.out.println(
+            			"99th event was of type: "
+            			+ Event.convertEventTypeToInteger(this.events.get(98))
+            		);
+            	}
+            	
+            	System.out.println();
             }
         }
     }

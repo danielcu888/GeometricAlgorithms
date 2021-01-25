@@ -37,6 +37,26 @@ public class Event {
         this.ls1 = ls_;
         this.ls2 = null;
     }
+    
+    public static int convertEventTypeToInteger(Event event) {
+    	if (event == null) {
+    		throw new IllegalArgumentException("Null event.");
+    	}
+
+    	switch (event.type)
+    	{
+    	case POINT_INTERSECTION:
+    		return 0;
+    	case START:
+    		return 1;
+    	case END:
+    		return 2;
+    	case LINE_INTERSECTION:
+    		return 3;
+    	default:
+    		throw new IllegalArgumentException("Unrecognised EventType: " + event);
+    	}
+    }
 
     @Override
     public String toString() {

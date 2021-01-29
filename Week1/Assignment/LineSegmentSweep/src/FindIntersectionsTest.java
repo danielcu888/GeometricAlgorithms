@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 class FindIntersectionsTest {
 
-	private static double TOL = 1e-12;
+        private static double TOL = 1e-12;
 
     private void verifyEvent( ArrayList<Event> events
                             , int index
@@ -87,35 +87,6 @@ class FindIntersectionsTest {
 
     @Test
     void testFindIntersectionsPairs() {
-
-        /*
-                MULTILINESTRING(
-                        (897 914,172 214),
-                        (73 914,626 779),
-                        (634 896,233 68),
-                        (874 890,648 114),
-                        (51 823,255 695),
-                        (832 799,409 469),
-                        (439 750,850 558),
-                        (939 747,687 715),
-                        (131 747,481 151),
-                        (580 716,271 427),
-                        (703 692,2 675),
-                        (294 668,128 290),
-                        (722 649,638 243),
-                        (383 639,35 318),
-                        (654 626,810 543),
-                        (87 616,149 23),
-                        (308 601,828 75),
-                        (850 538,672 225),
-                        (314 491,247 283),
-                        (463 450,878 233),
-                        (215 444,206 148),
-                        (786 433,463 58),
-                        (760 353,91 179),
-                        (932 188,780 139),
-                        (701 107,364 127))
-                */
 
         final Coordinate s0 = new Coordinate(897,914);
         final Coordinate e0 = new Coordinate(172,214);
@@ -251,70 +222,6 @@ class FindIntersectionsTest {
         assertNotEquals(null, inxs);
         assertEquals(60, inxs.size());
 
-        /*
-            MULTILINESTRING(
-                        (0 0,582.4820270341531 789.623736619149),
-                        (0 0,828.2575615972812 732.9374681393374),
-                        (0 0,731.5842812823165 720.6614960358497),
-                        (0 0,691.4823759791124 715.5691906005222),
-                        (0 0,540.3603019410496 702.6492020129403),
-                        (0 0,557.2761205342856 694.7469217942023),
-                        (0 0,694.5838341386373 691.795898973405),
-                        (0 0,666.1457538541939 691.1062451006011),
-                        (0 0,570.0576144767232 688.7760049159833),
-                        (0 0,550.3818107187741 688.2988456237078),
-                        (0 0,533.2087372801429 687.8823802193473),
-                        (0 0,170.87683659550765 679.0954439687927),
-                        (0 0,633.1876317638792 659.2846099789178),
-                        (0 0,519.358173231497 659.2832105627917),
-                        (0 0,645.5234913256413 653.5218726653939),
-                        (0 0,716.1129217351388 620.5457883865042),
-                        (0 0,710.9701314217443 595.6889685384308),
-                        (0 0,786.0146386699346 587.890971716235),
-                        (0 0,324.12295981346864 584.6910060348375),
-                        (0 0,550.1860158311347 579.1451187335094),
-                        (0 0,777.9127412133264 560.0720671749614),
-                        (0 0,244.10868549879777 554.3920669791901),
-                        (0 0,379.60152678588554 528.5723017512005),
-                        (0 0,260.6811964047811 526.1714484078584),
-                        (0 0,438.25869379663544 491.8259313307085),
-                        (0 0,425.651751594781 481.99072819451004),
-                        (0 0,211.99271639960133 481.2605228858391),
-                        (0 0,430.9164159467237 476.6653177154295),
-                        (0 0,437.3285033876702 470.17924465016443),
-                        (0 0,303.03598387850985 456.96245741388134),
-                        (0 0,301.93097429498727 455.92896948625025),
-                        (0 0,302.4295852109427 455.07990632650876),
-                        (0 0,419.38469962453075 452.85419274092624),
-                        (0 0,110.84248627721354 387.9581554453608),
-                        (0 0,345.5824102791316 381.5968099246788),
-                        (0 0,717.8674004508795 353.89868473399326),
-                        (0 0,742.1525010508617 348.35804960067253),
-                        (0 0,659.5625702931694 347.2190897503186),
-                        (0 0,367.1161014833698 344.92801004546175),
-                        (0 0,714.1312117043891 341.0700012504689),
-                        (0 0,704.7061996270668 338.6186528178022),
-                        (0 0,685.5425401250326 333.6343826334165),
-                        (0 0,695.7953711743962 328.27326374736384),
-                        (0 0,655.1145612028109 325.7203791469194),
-                        (0 0,708.4736149961465 321.64391697791854),
-                        (0 0,722.723150230535 314.19295518065996),
-                        (0 0,595.4743994900244 310.20858820816784),
-                        (0 0,248.59600577478346 287.95476419634264),
-                        (0 0,642.9487143459322 266.91878600533926),
-                        (0 0,640.7704728444661 264.3898678534823),
-                        (0 0,415.0608845491097 263.28489373923037),
-                        (0 0,642.139065584558 263.00548365869713),
-                        (0 0,689.068348419647 255.01344413117704),
-                        (0 0,209.09577532405183 249.8166106577052),
-                        (0 0,314.96862800986463 237.25193015503208),
-                        (0 0,674.8159196218231 229.951588997925),
-                        (0 0,680.1870764707235 224.5184572623067),
-                        (0 0,207.86676541550864 209.3958403322848),
-                        (0 0,131.58604925092942 189.5560128096588),
-                        (0 0,514.7271728083713 118.05476719238153))
-         */
-
         this.verifyEvent(inxs,0,EventType.POINT_INTERSECTION,582.4820270341531,789.623736619149,1,2);
         this.verifyEvent(inxs,1,EventType.POINT_INTERSECTION,828.2575615972812,732.9374681393374,3,7);
         this.verifyEvent(inxs,2,EventType.POINT_INTERSECTION,731.5842812823165,720.6614960358497,5,7);
@@ -375,5 +282,173 @@ class FindIntersectionsTest {
         this.verifyEvent(inxs,57,EventType.POINT_INTERSECTION,207.86676541550864,209.3958403322848,20,22);
         this.verifyEvent(inxs,58,EventType.POINT_INTERSECTION,131.58604925092942,189.5560128096588,15,22);
         this.verifyEvent(inxs,59,EventType.POINT_INTERSECTION,514.7271728083713,118.05476719238153,21,24);
+    }
+
+    @Test
+    void testFindIntersectionsPairs2() {
+
+            /*
+                MULTILINESTRING(
+                                (389 978, 376 404),
+                                (251 975, 12  925),
+                                (511 971, 469 6),
+                                (166 958, 956 487),
+                                (972 926, 529 562),
+                                (893 901, 151 139),
+                                (980 881, 815 474),
+                                (188 873, 16  87),
+                                (400 864, 197 841),
+                                (987 851, 19 836),
+                                (363 723, 394 546),
+                                (383 721, 642 15),
+                                (738 690, 999 596),
+                                (974 668, 94 512),
+                                (492 662, 926 222),
+                                (6   651, 994 386),
+                    (547 598, 819 157),
+                                (963 583, 487 32),
+                                (740 546, 512 432)
+                                (185 537, 581 82),
+                            (793 509, 912 328),
+                                (253 484, 867 204),
+                                (782 443, 983 416),
+                                (355 422, 342 36),
+                                (305 393, 433 214),
+                        )
+            */
+
+            final Coordinate s0 = new Coordinate(389,978);
+            final Coordinate e0 = new Coordinate(376,404);
+            final LineSegment ls0 = new LineSegment(0,s0,e0);
+
+            final Coordinate s1 = new Coordinate(251,975);
+            final Coordinate e1 = new Coordinate(12,925);
+            final LineSegment ls1 = new LineSegment(1,s1,e1);
+
+                final Coordinate s2 = new Coordinate(511,971);
+            final Coordinate e2 = new Coordinate(469,6);
+            final LineSegment ls2 = new LineSegment(2,s2,e2);
+
+                final Coordinate s3 = new Coordinate(166,958);
+            final Coordinate e3 = new Coordinate(956,487);
+            final LineSegment ls3 = new LineSegment(3,s3,e3);
+
+            final Coordinate s4 = new Coordinate(972,926);
+            final Coordinate e4 = new Coordinate(529,562);
+            final LineSegment ls4 = new LineSegment(4,s4,e4);
+
+            final Coordinate s5 = new Coordinate(893,901);
+            final Coordinate e5 = new Coordinate(151,139);
+            final LineSegment ls5 = new LineSegment(5,s5,e5);
+
+            final Coordinate s6 = new Coordinate(980,881);
+            final Coordinate e6 = new Coordinate(815,474);
+            final LineSegment ls6 = new LineSegment(6,s6,e6);
+
+            final Coordinate s7 = new Coordinate(188,873);
+            final Coordinate e7 = new Coordinate(16,87);
+            final LineSegment ls7 = new LineSegment(7,s7,e7);
+
+            final Coordinate s8 = new Coordinate(400,864);
+            final Coordinate e8 = new Coordinate(197,841);
+            final LineSegment ls8 = new LineSegment(8,s8,e8);
+
+            final Coordinate s9 = new Coordinate(987,851);
+            final Coordinate e9 = new Coordinate(19,836);
+            final LineSegment ls9 = new LineSegment(9,s9,e9);
+
+            final Coordinate s10 = new Coordinate(363,723);
+            final Coordinate e10 = new Coordinate(394,546);
+            final LineSegment ls10 = new LineSegment(10,s10,e10);
+
+            final Coordinate s11 = new Coordinate(383,721);
+            final Coordinate e11 = new Coordinate(642,15);
+            final LineSegment ls11 = new LineSegment(11,s11,e11);
+
+            final Coordinate s12 = new Coordinate(738,690);
+            final Coordinate e12 = new Coordinate(999,596);
+            final LineSegment ls12 = new LineSegment(12,s12,e12);
+
+            final Coordinate s13 = new Coordinate(974,668);
+            final Coordinate e13 = new Coordinate(94,512);
+            final LineSegment ls13 = new LineSegment(13,s13,e13);
+
+            final Coordinate s14 = new Coordinate(492,662);
+            final Coordinate e14 = new Coordinate(926,222);
+            final LineSegment ls14 = new LineSegment(14,s14,e14);
+
+            final Coordinate s15 = new Coordinate(6,651);
+            final Coordinate e15 = new Coordinate(994,386);
+            final LineSegment ls15 = new LineSegment(15,s15,e15);
+
+            final Coordinate s16 = new Coordinate(547,598);
+            final Coordinate e16 = new Coordinate(819,157);
+            final LineSegment ls16 = new LineSegment(16,s16,e16);
+
+            final Coordinate s17 = new Coordinate(963,583);
+            final Coordinate e17 = new Coordinate(487,32);
+            final LineSegment ls17 = new LineSegment(17,s17,e17);
+
+            final Coordinate s18 = new Coordinate(740,546);
+            final Coordinate e18 = new Coordinate(512,432);
+            final LineSegment ls18 = new LineSegment(18,s18,e18);
+
+            final Coordinate s19 = new Coordinate(185,537);
+            final Coordinate e19 = new Coordinate(581,82);
+            final LineSegment ls19 = new LineSegment(19,s19,e19);
+
+            final Coordinate s20 = new Coordinate(793,509);
+            final Coordinate e20 = new Coordinate(912,328);
+            final LineSegment ls20 = new LineSegment(20,s20,e20);
+
+            final Coordinate s21 = new Coordinate(253,484);
+            final Coordinate e21 = new Coordinate(867,204);
+            final LineSegment ls21 = new LineSegment(21,s21,e21);
+
+            final Coordinate s22 = new Coordinate(782,443);
+            final Coordinate e22 = new Coordinate(983,416);
+            final LineSegment ls22 = new LineSegment(22,s22,e22);
+
+            final Coordinate s23 = new Coordinate(355,422);
+            final Coordinate e23 = new Coordinate(342,36);
+            final LineSegment ls23 = new LineSegment(23,s23,e23);
+
+            final Coordinate s24 = new Coordinate(305,393);
+            final Coordinate e24 = new Coordinate(433,214);
+            final LineSegment ls24 = new LineSegment(24,s24,e24);
+
+            final ArrayList<LineSegment> segments = new ArrayList<LineSegment>();
+            segments.add(ls0);
+            segments.add(ls1);
+            segments.add(ls2);
+            segments.add(ls3);
+            segments.add(ls4);
+            segments.add(ls5);
+            segments.add(ls6);
+            segments.add(ls7);
+            segments.add(ls8);
+            segments.add(ls9);
+            segments.add(ls10);
+            segments.add(ls11);
+            segments.add(ls12);
+            segments.add(ls13);
+            segments.add(ls14);
+            segments.add(ls15);
+            segments.add(ls16);
+            segments.add(ls17);
+            segments.add(ls18);
+            segments.add(ls19);
+            segments.add(ls20);
+            segments.add(ls21);
+            segments.add(ls22);
+            segments.add(ls23);
+            segments.add(ls24);
+
+        final FindIntersections fi = new FindIntersections(segments);
+        assertNotEquals(null, fi);
+
+        final ArrayList<Event> inxs = fi.intersections();
+        assertNotEquals(null, inxs);
+        assertEquals(75, inxs.size());
     }
 }

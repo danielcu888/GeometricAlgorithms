@@ -193,7 +193,7 @@ class LineSegmentTest {
         final LineSegment ls = new LineSegment(0,e,s);
         assertEquals(0,ls.x(0));
     }
-    
+
     @Test
     void testGradient() {
         final Coordinate s = new Coordinate(0.0, 0.0);
@@ -536,4 +536,22 @@ class LineSegmentTest {
         assertEquals(0,inx.coord.compareTo(new Coordinate(0,0)));
         assertEquals(InxDim.POINT,inx.dim);
     }
+
+    @Test
+    void testIntersectuion13() {
+        final Coordinate s1 = new Coordinate(251,975);
+        final Coordinate e1 = new Coordinate(12,925);
+        final LineSegment ls1 = new LineSegment(0,s1,e1);
+
+        final Coordinate s2 = new Coordinate(166,958);
+        final Coordinate e2 = new Coordinate(956,487);
+        final LineSegment ls2 = new LineSegment(1,s2,e2);
+
+        final InxData inx = LineSegment.intersection(ls1,ls2);
+        System.out.println(inx.coord);
+        assertEquals(166.971466899894, inx.coord.x);
+        assertEquals(957.4208089748732, inx.coord.y);
+        assertEquals(InxDim.POINT,inx.dim);
+    }
+
 }

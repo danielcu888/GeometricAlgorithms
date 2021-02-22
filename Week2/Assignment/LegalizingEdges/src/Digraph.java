@@ -60,6 +60,7 @@ public class Digraph {
 		// Legalize edges.
 		int vid = 0;
 		while (vid < this.V) {
+			
 			if (vid == 0) {
 				// We're starting again so clear all marks.
 				this.clearAllMarks();

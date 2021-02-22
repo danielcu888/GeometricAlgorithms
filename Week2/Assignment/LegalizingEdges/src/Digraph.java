@@ -6,9 +6,13 @@ public class Digraph {
 	private int V;
 	private final Vertex[] vertices;
 	private final LinkedList<DirectedEdge>[] edges;
+	private int flippedEdgeCount;
 	
 	@SuppressWarnings("unchecked")
 	Digraph(Scanner sc) {
+		
+		// Initialize flipped edge count.
+		this.flippedEdgeCount = 0;
 		
 		// Read vertex count.
 		this.V = sc.nextInt();
@@ -53,17 +57,166 @@ public class Digraph {
 			tri.updateEdges(tedges);
 		}
 		
-		
 		// Legalize edges.
+		int vid = 0;
+		while (vid < this.V) {
+			if (vid == 0) {
+				// We're starting again so clear all marks.
+				this.clearAllMarks();
+			}
+			
+			
+			DirectedEdge flipCandidate = null;
+			
+			// Iterate over all the edges incident to Vertex vid.
+			for (DirectedEdge evw : this.edges[vid]) {
+				
+				// Check if already marked - i.e., is legal.
+				if (evw.getMark()) {
+					continue;
+				}
+				
+				final int v = evw.start().id();
+				final int w = evw.end().id();
+				
+				// Check if flippable.
+				if (!this.isFlippable(v,w)) {
+					// Edge v->w is not flippable - skip.
+					evw.setMark(true);
+					continue;
+				}
+				
+				if (this.isLegal(v, w)) {
+					// evw is legal, and therefore so is ewv. Mark them both.
+
+					evw.setMark(true);
+					
+					// Find ewv
+					for (DirectedEdge e : this.edges[w]) {
+						if (e.end().id() == v) {
+							e.setMark(true);
+							break;
+						}
+					}
+					
+					continue;
+				} else if (flipCandidate != null){
+					// v-w should be flipped, but we already have a flip candidate
+					// with the same low(e) == v.
+					// Update flip candidate to be the one with the lowest w.
+					if (w < flipCandidate.end().id()) {
+						// Update flip candidate.
+						flipCandidate = evw;
+					}
+				} else {
+					flipCandidate = evw;
+				}
+			}
+			
+			// Identified all illegal edges out from v.
+			if (flipCandidate != null) {
+				// We have a flip candidate - flip it.
+				this.flip(flipCandidate.start().id(), flipCandidate.end().id());
+				
+				// reset counter
+				vid = 0;
+				
+				// clear all marks
+				this.clearAllMarks();
+			}
+		}
 		
+		// We have processed all edges in the graph without requiring a flip - we're done.
+	}
+	
+	public boolean isLegal(int v, int w) {
+		// 1a. Find DirectedEdge v->w
+		DirectedEdge evw = null;
+		for (DirectedEdge e : this.edges(v)) {
+			if (e.end().id() == w) {
+				evw = e;
+				break;
+			}
+		}
 		
+		// 1b. Retrieve Triangle of evw
+		Triangle tevw = evw.triangle();
 		
+		// 1c. Retrieve unshared vertex on tevw
+		int x = -1;
+		for (DirectedEdge e : tevw.edges()) {
+			
+			final int sid = e.start().id();
+			if ((sid != v) && (sid != w)) {
+				x = e.start().id();
+				break;
+			}
+			
+			final int eid = e.end().id();
+			if ((eid != v) && (eid != w)) {
+				x = e.end().id();
+				break;
+			}
+		}
 		
+		// 2a. Find DirectedEdge w->v
+		DirectedEdge ewv = null;
+		for (DirectedEdge e : this.edges(w)) {
+			if (e.end().id() == v) {
+				ewv = e;
+				break;
+			}
+		}
 		
+		// 2b. Retrieve Triangle of ewv
+		Triangle tewv = ewv.triangle();
 		
+		// 2c. Retrieve unshared vertex on tewv
+		int y = -1;
+		for (DirectedEdge e : tewv.edges()) {
+			
+			final int sid = e.start().id();
+			if ((sid != v) && (sid != w)) {
+				y = e.start().id();
+				break;
+			}
+			
+			final int eid = e.end().id();
+			if ((eid != v) && (eid != w)) {
+				y = e.end().id();
+				break;
+			}
+		}
 		
+		// 3. Retrieve circumcircle of tevw:
+		final Circle ctevw = this.getCircumcircle(x, v, w);
 		
+		// 4. Check if y is contained by ctevw
+		final boolean ycontained = ctevw.contains(new Coordinate(this.vertices[y].x(), this.vertices[y].y()));
+		if (ycontained) {
+			return false;
+		}
 		
+		// 5. Retrieve circumcircle of tewv
+		final Circle ctewv = this.getCircumcircle(y, w, v);
+		
+		// 6. Check if x is contained by ctewv
+		final boolean xcontained = ctewv.contains(new Coordinate(this.vertices[x].x(), this.vertices[x].y()));
+		if (xcontained) {
+			return false;
+		}
+		
+		// Edges v->w and w->v are both legal.
+		return true;
+	}
+	
+	
+	public void clearAllMarks() {
+		for (int vid = 0; vid < this.V; ++vid) {
+			for (DirectedEdge e : this.edges[vid]) {
+				e.setMark(false);
+			}
+		}
 	}
 
 	DirectedEdge addEdge(int v, int w, Triangle t) {
@@ -301,8 +454,15 @@ public class Digraph {
 		// 6d. Update teyx's edges.
 		final DirectedEdge[] teyxEdges = {evy,eyx,exv};
 		teyx.updateEdges(teyxEdges);
+		
+		// 7. Update flippedEdgeCount.
+		++this.flippedEdgeCount;
 	}
 
+	int flippedEdgeCount() {
+		return this.flippedEdgeCount;
+	}
+	
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();

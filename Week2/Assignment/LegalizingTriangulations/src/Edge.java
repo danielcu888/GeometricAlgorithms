@@ -6,6 +6,10 @@ public class Edge {
 	public Triangle t1 = null;
 	public Triangle t2 = null;
 	
+	public boolean containsVertex(int i) {
+		return ((this.vid1 == i) || (this.vid2 == i));
+	}
+	
 	public Edge(String id_, int vid1_, int vid2_, Triangle t1_, Triangle t2_) {
 		this.id = id_;
 		this.vid1 = vid1_;

@@ -1,4 +1,7 @@
 import java.util.SortedSet;
+
+import javafx.scene.shape.Circle;
+
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -207,4 +210,86 @@ public class Triangulation {
 			}
 		}
 	}	
+	
+	private boolean isEdgeIllegal(Edge e) {
+		
+		// Check that e is not a boundary edge.
+		if ((e.t1 == null) || (e.t2 == null)) {
+			// Boundary edges can't be illegal.
+			return false;
+		}				
+		
+		// Retrieve the first Triangle associated with e:
+		final Triangle t1 = e.t1;
+		
+		// Retrieve the vertex index in t1 that is not in e:		
+		final int uvid1 = e.t1.unsharedVertexIndex(e);
+		
+		// Retrieve the second Triangle associated with e:
+		final Triangle t2 = e.t2;
+
+		// Retrieve the vertex index in t2 that is not in e:
+		final int uvid2 = e.t2.unsharedVertexIndex(e);
+
+		// Calculate the circumcircle of t1.
+		final Circ c1 = new Circ(t1);
+		
+		// Check if the vertex uvid2 is contained in c1.
+		if (c1.contains(this.mVertices.get(uvid2))) {
+			// e is illegal.
+			return true;
+		}
+
+		// Calculate the circumcircle of t2.
+		final Circ c2 = new Circ(t2);
+
+		// Check if the vertex uvid1 is contained in c2.
+		if (c2.contains(this.mVertices.get(uvid1))) {
+			// e is illegal.
+			return true;
+		}
+		
+		// Edge is not illegal.
+		return false;
+	}
+	
+	private void flipEdge(Edge e) {
+		throw new UnsupportedOperationException("flipEdge is not yet implemented.");
+	}
+
+	public int legalise() {
+		
+		int numFlippedEdges = 0;
+		
+		boolean foundIllegalEdge = false;
+		
+		do
+		{
+			// Reset flag for next iteration over edges.
+			foundIllegalEdge = false;
+			
+			
+			// Loop over edge keys.
+			for (String key : this.mEdges.keySet()) {
+				
+				// Retrieve current Edge.
+				final Edge e = this.mEdges.get(key);				
+				
+				// Check if current Edge is illegal.
+				if (this.isEdgeIllegal(e)) {
+					// Edge is illegal. Update flag.
+					foundIllegalEdge = true;
+					
+					// Flip the edge.
+					this.flipEdge(e);
+					
+					// Increment count.
+					++numFlippedEdges;
+				}				
+			}
+		} while (foundIllegalEdge);
+		
+		return numFlippedEdges;
+	}
+
 }
